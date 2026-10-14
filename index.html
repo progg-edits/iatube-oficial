@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IA Tube 🎮</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+    :root { 
+      --bg: #121217; --card: #1a1a24; --accent: #e044b0; 
+      --gold: #f59e0b; --green: #22c55e; --purple: #a855f7; 
+      --red: #ef4444; --tiktok-blue: #3897f0; --dono-purple: #c084fc;
+    }
+    body { background: var(--bg); color: #fff; min-height: 100vh; }
+    
+    header { 
+      background: var(--card); padding: 12px 20px; display: flex; align-items: center; 
+      justify-content: space-between; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid #333; 
+      position: sticky; top: 0; z-index: 100; 
+    }
+    .logo { font-size: 20px; font-weight: bold; color: var(--accent); cursor: pointer; }
+    
+    .search-container { position: relative; flex: 1; max-width: 400px; }
+    .search-box { 
+      width: 100%; padding: 10px 14px; border-radius: 20px; border: none; 
+      background: #2a2a3a; color: #fff; font-size: 14px; outline: none; 
+    }
+    .search-results { 
+      position: absolute; top: 105%; left: 0; right: 0; background: var(--card); 
+      border: 1px solid #333; border-radius: 10px; margin-top: 6px; max-height: 350px; 
+      overflow-y: auto; z-index: 200; display: none; 
+    }
+    .search-results.active { display: block; }
+    .search-item { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid #2a2a3a; }
+    .search-item:hover { background: #2a2a3a; }
+    
+    .btn { 
+      padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer; 
+      font-weight: bold; font-size: 14px; 
+    }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-success { background: var(--green); color: white; }
+    .btn-secondary { background: #3a3a4a; color: white; }
+    .btn-red { background: var(--red); color: white; }
+    .btn-purple { background: var(--dono-purple); color: white; }
+    
+    .user-bar { display: flex; align-items: center; gap: 12px; }
+    .coins { 
+      background: rgba(245,158,11,0.15); border: 1px solid var(--gold); padding: 4px 10px; 
+      border-radius: 16px; font-size: 13px; color: var(--gold); font-weight: bold; 
+    }
+    .user-avatar { 
+      width: 36px; height: 36px; border-radius: 50%; background: var(--accent); 
+      display: flex; align-items: center; justify-content: center; font-weight: bold; 
+    }
+    
+    main { padding: 20px; max-width: 1200px; margin: 0 auto; }
+    h2 { font-size: 18px; margin-bottom: 15px; }
+    h3 { font-size: 16px; margin-bottom: 12px; }
+
+    .verified-tiktok { 
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 16px; height: 16px; background: var(--tiktok-blue); 
+      border-radius: 50%; color: white; font-size: 11px; font-weight: bold;
+      margin-left: 4px;
+    }
+    .verified-dono { 
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px; background: var(--dono-purple); 
+      border-radius: 50%; color: white; font-size: 11px; font-weight: bold;
+      margin-left: 4px; box-shadow: 0 0 6px var(--dono-purple);
+    }
+    
+    .lives { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 35px; }
+    .live-card { 
+      min-width: 260px; background: var(--card); border-radius: 12px; overflow: hidden; 
+      cursor: pointer; border: 1px solid #333; 
+    }
+    .live-card:hover { transform: translateY(-3px); transition: 0.2s; }
+    .live-thumb { 
+      height: 150px; background: linear-gradient(135deg, #2a1a3a, #1a2a3a); 
+      display: flex; align-items: center; justify-content: center; font-size: 55px; 
+      position: relative; 
+    }
+    .live-badge { 
+      position: absolute; top: 8px; left: 8px; background: var(--red); color: white; 
+      padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; 
+      display: flex; align-items: center; gap: 4px; 
+    }
+    .live-badge::before { 
+      content: ''; width: 8px; height: 8px; background: white; border-radius: 50%; 
+      animation: pulse 1s infinite; 
+    }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .live-info { padding: 12px; }
+    .live-name { font-weight: bold; margin-bottom: 4px; display: flex; align-items: center; }
+    .live-title { font-size: 13px; color: #aaa; margin-bottom: 6px; }
+    .live-viewers { font-size: 12px; color: #888; }
+    
+    .videos { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+    .video-card { 
+      background: var(--card); border-radius: 12px; overflow: hidden; cursor: pointer; 
+      border: 1px solid #333; 
+    }
+    .video-card:hover { transform: translateY(-3px); transition: 0.2s; }
+    .video-thumb { 
+      height: 150px; background: #2a2a3a; display: flex; align-items: center; 
+      justify-content: center; font-size: 55px; position: relative; 
+    }
+    .video-duration { 
+      position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.8); 
+      padding: 2px 6px; border-radius: 4px; font-size: 11px; 
+    }
+    .video-info { padding: 12px; }
+    .video-title { font-weight: bold; margin-bottom: 6px; font-size: 14px; }
+    .video-channel { font-size: 13px; color: #888; margin-bottom: 4px; display: flex; align-items: center; }
+    
+    .page { display: none; }
+    .page.active { display: block; }
+    
+    .back { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); cursor: pointer; margin-bottom: 20px; }
+    
+    .channel-header { background: var(--card); padding: 24px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #333; }
+    .channel-top { display: flex; gap: 20px; flex-wrap: wrap; }
+    .channel-avatar { 
+      width: 80px; height: 80px; border-radius: 50%; background: var(--accent); 
+      display: flex; align-items: center; justify-content: center; font-size: 40px; 
+    }
+    .channel-info h1 { font-size: 24px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .channel-stats { display: flex; gap: 25px; margin: 12px 0; flex-wrap: wrap; }
+    .stat-item { text-align: center; }
+    .stat-value { font-size: 22px; font-weight: bold; }
+    .stat-label { font-size: 11px; color: #888; text-transform: uppercase; }
+    .channel-desc { color: #aaa; margin: 10px 0; }
+    .channel-actions { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+    
+    .video-player { 
+      background: #000; height: 300px; border-radius: 12px; display: flex; align-items: center; 
+      justify-content: center; position: relative; margin-bottom: 20px; 
+    }
+    .play-btn { 
+      width: 80px; height: 80px; background: rgba(255,255,255,0.2); border-radius: 50%; 
+      display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 30px;
+    }
+    
+    .floating-live {
+      position: fixed; bottom: 20px; right: 20px; width: 320px; background: var(--card);
+      border-radius: 12px; border: 2px solid var(--accent); box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      z-index: 9999; display: none; resize: both; overflow: auto; min-width: 250px; min-height: 200px;
+    }
+    .floating-live.show { display: block; }
+    .floating-header { 
+      padding: 8px 12px; background: var(--accent); border-radius: 10px 10px 0 0; 
+      display: flex; justify-content: space-between; align-items: center; cursor: move;
+    }
+    .floating-close { cursor: pointer; font-size: 18px; }
+    .floating-body { padding: 12px; }
+    .floating-viewers { font-size: 13px; color: var(--green); margin-bottom: 10px; font-weight: bold; }
+    .floating-chat { height: 150px; overflow-y: auto; margin-bottom: 10px; font-size: 12px; }
+    .floating-chat .msg { margin-bottom: 6px; }
+    .floating-chat .name { font-weight: bold; color: var(--accent); }
+    
+    .modal { 
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; 
+      align-items: center; justify-content: center; z-index: 1000; padding: 20px;
+    }
+    .modal.active { display: flex; }
+    .modal-content { background: var(--card); padding: 25px; border-radius: 12px; max-width: 420px; width: 100%; border: 1px solid #444; }
+    .modal-title { font-size: 18px; margin-bottom: 15px; }
+    .modal-close { float: right; font-size: 22px; cursor: pointer; color: #888; margin-top: -5px; }
+    .modal-input { width: 100%; padding: 10px; border-radius: 6px; border: none; background: #2a2a3a; color: white; margin-bottom: 12px; }
+    .hidden { display: none !important; }
+    
+    .my-channel-box { 
+      background: linear-gradient(135deg, rgba(224,68,176,0.1), rgba(168,85,247,0.1)); 
+      border: 1px solid var(--accent); border-radius: 10px; padding: 16px; margin-bottom: 25px;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    .empty { text-align: center; padding: 40px; color: #666; }
+    .toast {
+      position: fixed; bottom: 20px; right: 20px; background: var(--card); padding: 12px 20px;
+      border-radius: 6px; border-left: 4px solid var(--accent); z-index: 9999;
+      transform: translateY(100px); opacity: 0; transition: 0.3s;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-color: var(--green); }
+    .toast.error { border-color: var(--red); }
+    
+    .admin-panel { background: var(--card); border-radius: 12px; padding: 20px; margin-top: 20px; border: 1px solid var(--dono-purple); }
+    .admin-section { margin-bottom: 20px; }
+    .admin-section h4 { margin-bottom: 10px; color: var(--dono-purple); }
+    .admin-row { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; align-items: center; }
+    .admin-row input { padding: 6px; border-radius: 4px; border: none; background: #2a2a3a; color: white; flex: 1; min-width: 120px; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+    .tab { padding: 6px 12px; background: #2a2a3a; border-radius: 6px; cursor: pointer; font-size: 13px; }
+    .tab.active { background: var(--dono-purple); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<!-- Janela Flutuante da Live -->
+<div id="floatingLive" class="floating-live">
+  <div class="floating-header" id="floatDragHandle">
+    <span>🔴 Live em Andamento</span>
+    <span class="floating-close" onclick="closeFloating()">✕</span>
+  </div>
+  <div class="floating-body">
+    <p id="floatTitle" style="font-weight:bold; margin-bottom:5px;">Minha Live</p>
+    <p id="floatChannel" style="font-size:12px; color:#888; margin-bottom:8px;">Seu Canal</p>
+    <div class="floating-viewers">👁 Espectadores: <span id="floatViewerCount">1</span></div>
+    <div class="floating-chat" id="floatChat">
+      <div class="msg"><span class="name">Sistema:</span> Bem-vindo ao chat!</div>
+    </div>
+    <button class="btn btn-primary" style="width:100%; font-size:13px; margin-top:8px;" onclick="goBackLive()">↩️ Voltar para a Live</button>
+  </div>
+</div>
+
+<!-- Modal Login -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModal('loginModal')">✕</span>
+    <h3 class="modal-title">🎬 Entrar</h3>
+    <label style="font-size:13px; color:#aaa;">Seu nome</label>
+    <input type="text" id="inpNome" class="modal-input" placeholder="Digite seu nome...">
+    <label style="display:flex; align-items:center; gap:8px; margin-bottom:10px; cursor:pointer;">
+      <input type="checkbox" id="chkOwner" onchange="toggleOwnerPass()">
+      <span>👑 Sou o Dono</span>
+    </label>
+    <div id="ownerPassWrap" class="hidden">
+      <label style="font-size:13px; color:#aaa;">Senha do Dono</label>
+      <input type="password" id="ownerPass" class="modal-input" placeholder="Digite a senha...">
+    </div>
+    <button class="btn btn-primary" style="width:100%;" onclick="doLogin()">Entrar ✅</button>
+  </div>
+</div>
+
+<!-- Modal Criar Canal -->
+<div id="channelModal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModal('channelModal')">✕</span>
+    <h3 class="modal-title">📢 Criar Canal</h3>
+    <label style="font-size:13px; color:#aaa;">Nome do canal</label>
+    <input type="text" id="inpChannelName" class="modal-input" placeholder="Meu Canal">
+    <label style="font-size:13px; color:#aaa;">Emoji</label>
+    <input type="text" id="inpChannelIcon" class="modal-input" placeholder="🎮" maxlength="2">
+    <button class="btn btn-primary" style="width:100%;" onclick="createChannel()">Criar ✅</button>
+  </div>
+</div>
+
+<!-- Modal Postar Vídeo -->
+<div id="videoModal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModal('videoModal')">✕</span>
+    <h3 class="modal-title">➕ Postar Vídeo</h3>
+    <label style="font-size:13px; color:#aaa;">Título</label>
+    <input type="text" id="inpVideoTitle" class="modal-input" placeholder="Meu vídeo incrível">
+    <label style="font-size:13px; color:#aaa;">Duração</label>
+    <input type="text" id="inpVideoDur" class="modal-input" placeholder="5:30">
+    <button class="btn btn-primary" style="width:100%;" onclick="postVideo()">Publicar ✅</button>
+  </div>
+</div>
+
+<!-- Modal Iniciar Live -->
+<div id="liveModal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModal('liveModal')">✕</span>
+    <h3 class="modal-title">🔴 Iniciar Live</h3>
+    <label style="font-size:13px; color:#aaa;">Título da Live</label>
+    <input type="text" id="inpLiveTitle" class="modal-input" placeholder="Jogando com vocês!">
+    <button class="btn btn-success" style="width:100%;" onclick="startLive()">🔴 Iniciar ✅</button>
+  </div>
+</div>
+
+<!-- Modal Painel do Dono -->
+<div id="adminModal" class="modal">
+  <div class="modal-content" style="max-width:600px;">
+    <span class="modal-close" onclick="closeModal('adminModal')">✕</span>
+    <h3 class="modal-title" style="color:var(--dono-purple);">👑 Painel do Dono</h3>
+    
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('users')">Usuários</div>
+      <div class="tab" onclick="switchTab('content')">Conteúdo</div>
+      <div class="tab" onclick="switchTab('stats')">Estatísticas</div>
+    </div>
+    
+    <div id="tabUsers" class="tab-content active">
+      <div class="admin-section">
+        <h4>✅ Verificados</h4>
+        <div class="admin-row">
+          <input type="text" id="verifyTarget" placeholder="Nome do canal">
+          <button class="btn btn-sm btn-purple" onclick="giveVerify()">Dar Verificado</button>
+          <button class="btn btn-sm btn-secondary" onclick="removeVerify()">Retirar</button>
+        </div>
+      </div>
+      <div class="admin-section">
+        <h4>👥 Seguidores</h4>
+        <div class="admin-row">
+          <input type="text" id="followerTarget" placeholder="Nome do canal">
+          <input type="number" id="followerAmount" value="100" style="width:80px;">
+          <button class="btn btn-sm btn-success" onclick="addFollowers()">+ Seguidores</button>
+          <button class="btn btn-sm btn-red" onclick="removeFollowers()">- Seguidores</button>
+        </div>
+      </div>
+      <div class="admin-section">
+        <h4>🚫 Banir Usuário</h4>
+        <div class="admin-row">
+          <input type="text" id="banTarget" placeholder="Nome do usuário">
+          <button class="btn btn-sm btn-red" onclick="banUser()">Banir</button>
+          <button class="btn btn-sm btn-success" onclick="unbanUser()">Desbanir</button>
+        </div>
+      </div>
+    </div>
+    
+    <div id="tabContent" class="tab-content">
+      <div class="admin-section">
+        <h4>💰 Monetização</h4>
+        <div class="admin-row">
+          <input type="text" id="monTarget" placeholder="Nome do canal">
+          <button class="btn btn-sm btn-purple" onclick="monetize()">Monetizar</button>
+          <button class="btn btn-sm btn-secondary" onclick="demonetize()">Desmonetizar</button>
+        </div>
+      </div>
+      <div class="admin-section">
+        <h4>🔥 Viralizar Vídeo</h4>
+        <div class="admin-row">
+          <input type="text" id="viralTarget" placeholder="Título do vídeo">
+          <button class="btn btn-sm btn-red" onclick="viralize()">Viralizar</button>
+          <button class="btn btn-sm btn-secondary" onclick="deviralize()">Desviralizar</button>
+        </div>
+      </div>
+    </div>
+    
+    <div id="tabStats" class="tab-content">
+      <div class="admin-section">
+        <h4>📊 Estatísticas do Site</h4>
+        <p style="margin-bottom:8px;">👤 Total de usuários: <strong id="statUsers">1,247</strong></p>
+        <p style="margin-bottom:8px;">📺 Canais ativos: <strong id="statChannels">856</strong></p>
+        <p style="margin-bottom:8px;">🎬 Vídeos enviados: <strong id="statVideos">3,421</strong></p>
+        <p>🔴 Lives agora: <strong id="statLives">12</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<header>
+  <div class="logo" onclick="goHome()">📺 IA Tube</div>
+  <div class="search-container">
+    <input type="text" class="search-box" id="searchInput" placeholder="Pesquisar canais, vídeos..." oninput="handleSearch()">
+    <div class="search-results" id="searchResults"></div>
+  </div>
+  <div class="user-bar" id="userBar">
+    <button class="btn btn-primary" onclick="openModal('loginModal')">Entrar</button>
+  </div>
+</header>
+
+<main>
+  <!-- Página Inicial -->
+  <div id="pageHome" class="page active">
+    <h2>🔴 Lives agora</h2>
+    <div class="lives" id="livesContainer"></div>
+    
+    <h2>🎬 Vídeos em destaque</h2>
+    <div class="videos" id="videosContainer"></div>
+  </div>
+
+  <!-- Meu Canal -->
+  <div id="pageMyChannel" class="page">
+    <div class="back" onclick="goHome()">← Voltar</div>
+    <div id="myChannelContent"></div>
+  </div>
+
+  <!-- Canal de Outro Usuário -->
+  <div id="pageChannel" class="page">
+    <div class="back" onclick="goHome()">← Voltar</div>
+    <div id="channelContent"></div>
+  </div>
+
+  <!-- Live -->
+  <div id="pageLive" class="page">
+    <div class="back" onclick="goHome()">← Voltar</div>
+    <h2 id="liveTitleText">🔴 Live</h2>
+    <div class="video-player" id="livePlayer">
+      <div style="text-align:center; color:#aaa;">
+        <div style="font-size:48px; margin-bottom:16px;">📹</div>
+        <p>Aguardando transmissão...</p>
+      </div>
+    </div>
+    <p style="color:#888; font-size:14px; margin-bottom:20px;">💬 Use a janelinha flutuante para ver o chat e espectadores enquanto navega</p>
+  </div>
+</main>
+
+<script>
+// ⚠️ SENHA DO DONO — CONFIGURADA CORRETAMENTE!
+const SENHA_DONO_CORRETA = 'progg_edits20_15_67';
+
+// ==================== DADOS ====================
+let currentUser = null;
+let myChannel = null;
+let isOwner = false;
+let liveActive = false;
+let liveViewers = 0;
+let botChatInterval = null;
+
+// Canais de exemplo
+const sampleChannels = [
+  { id: 'valorant_ai', name: 'Valorant AI', icon: '🎯', followers: 5200, verified: true, isDono: false, desc: 'Jogando Valorant com IA!' },
+  { id: 'minecraft_ai', name: 'Minecraft Builds', icon: '⛏️', followers: 4100, verified: true, isDono: false, desc: 'Construindo coisas incríveis!' },
+  { id: 'ff_ai', name: 'Free Fire Pro', icon: '🔥', followers: 3800, verified: true, isDono: false, desc: 'Só cabeça! Treine comigo!' },
+  { id: 'fortnite_ai', name: 'Fortnite Battle', icon: '🏔️', followers: 2900, verified: false, isDono: false, desc: 'Vamos vencer essa partida!' },
+  { id: 'sonic_ai', name: 'Sonic Games', icon: '💨', followers: 1500, verified: false, isDono: false, desc: 'Correndo muito!' },
+];
+
+// Lives de exemplo
+const sampleLives = [
+  { id: 1, channel: 'Valorant AI', icon: '🎯', title: 'Rankeada subindo pra Radiante! 🏆', viewers: 234, isSample: true },
+  { id: 2, channel: 'Free Fire Pro', icon: '🔥', title: 'Jogando com seguidores! Entra aí!', viewers: 189, isSample: true },
+  { id: 3, channel: 'Minecraft Builds', icon: '⛏️', title: 'Construindo uma cidade gigante 🏗️', viewers: 156, isSample: true },
+];
+
+// Vídeos de exemplo
+const sampleVideos = [
+  { id: 1, channel: 'Valorant AI', icon: '🎯', title: 'COMO MELHORAR A MIRA NO VALORANT 🎯', duration: '8:24', views: '45K', viral: true, monetized: true },
+  { id: 2, channel: 'Free Fire Pro', icon: '🔥', title: 'DICAS DE COMO JOGAR SOLO VS ESQUADRÃO', duration: '12:05', views: '32K', viral: false, monetized: true },
+  { id: 3, channel: 'Minecraft Builds', icon: '⛏️', title: '5 COISAS QUE VOCÊ NÃO SABIA NO MINECRAFT', duration: '6:42', views: '28K', viral: true, monetized: false },
+  { id: 4, channel: 'Fortnite Battle', icon: '🏔️', title: 'PRIMEIRA VEZ JOGANDO FORTNITE!', duration: '15:30', views: '19K', viral: false, monetized: false },
+];
+
+// Mensagens dos bots
+const botMessages = [
+  { name: 'Joao_Gamer', msg: 'Oi! Boa sorte na live!' },
+  { name: 'Ana_Silva', msg: 'Muito bom! Continue assim!' },
+  { name: 'Master_Pro', msg: 'Conte comigo pra tudo!' },
+  { name: 'Luan_Games', msg: 'Você é muito bom nisso!' },
+  { name: 'Carla_Santos', msg: 'Estou aprendendo muito com você!' },
+  { name: 'Pedro_Joga', msg: 'Quando vem a próxima live?' },
+  { name: 'Mariana_Art', msg: 'Tudo de bom pra você! 💖' },
+  { name: 'Lucas_Play', msg: 'Vai lá, você consegue!' },
+];
+
+// ==================== FUNÇÕES ====================
+
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function toggleOwnerPass() {
+  const wrap = document.getElementById('ownerPassWrap');
+  const check = document.getElementById('chkOwner').checked;
+  wrap.classList.toggle('hidden', !check);
+}
+
+function doLogin() {
+  const nome = document.getElementById('inpNome').value.trim();
+  const ownerCheck = document.getElementById('chkOwner').checked;
+  const senhaDigitada = document.getElementById('ownerPass').value;
+  
+  if (!nome) { showToast('Digite seu nome!', 'error'); return; }
+  
+  if (ownerCheck) {
+    if (!senhaDigitada) {
+      showToast('Digite a senha do dono!', 'error');
+      return;
+    }
+    if (senhaDigitada !== SENHA_DONO_CORRETA) {
+      showToast('Senha incorreta!', 'error');
+      return;
+    }
+    isOwner = true;
+    showToast('👑 Bem-vindo, Dono!', 'success');
+  } else {
+    isOwner = false;
+    showToast('Bem-vindo, ' + nome + '!', 'success');
+  }
+  
+  currentUser = { name: nome };
+  saveUserData();
+  closeModal('loginModal');
+  updateUserBar();
+  checkMyChannel();
+}
+
+function updateUserBar() {
+  const bar = document.getElementById('userBar');
+  if (currentUser) {
+    let adminBtn = isOwner ? `<button class="btn btn-purple" onclick="openModal('adminModal')">👑 Painel</button>` : '';
+    let myChannelBtn = myChannel ? `<button class="btn btn-secondary" onclick="openMyChannel()">📺 Meu Canal</button>` : `<button class="btn btn-primary" onclick="openModal('channelModal')">➕ Criar Canal</button>`;
+    bar.innerHTML = `
+      <div class="user-avatar">${currentUser.name.charAt(0).toUpperCase()}</div>
+      <span>${currentUser.name}</span>
+      ${myChannelBtn}
+      ${adminBtn}
+      <button class="btn btn-red btn-sm" onclick="logout()">Sair</button>
+    `;
+  }
+}
+
+function logout() {
+  currentUser = null;
+  myChannel = null;
+  isOwner = false;
+  localStorage.removeItem('iatube_user');
+  localStorage.removeItem('iatube_mychannel');
+  localStorage.removeItem('iatube_isowner');
+  location.reload();
+}
+
+function saveUserData() {
+  localStorage.setItem('iatube_user', JSON.stringify(currentUser));
+  if (myChannel) localStorage.setItem('iatube_mychannel', JSON.stringify(myChannel));
+  localStorage.setItem('iatube_isowner', JSON.stringify(isOwner));
+}
+
+function loadUserData() {
+  const u = localStorage.getItem('iatube_user');
+  const c = localStorage.getItem('iatube_mychannel');
+  const o = localStorage.getItem('iatube_isowner');
+  if (u) currentUser = JSON.parse(u);
+  if (c) myChannel = JSON.parse(c);
+  if (o) isOwner = JSON.parse(o);
+  if (currentUser) { updateUserBar(); checkMyChannel(); }
+}
+
+function checkMyChannel() {
+  if (myChannel) updateUserBar();
+}
+
+function createChannel() {
+  const name = document.getElementById('inpChannelName').value.trim();
+  const icon = document.getElementById('inpChannelIcon').value.trim() || '📺';
+  if (!name) { showToast('Digite o nome do canal!', 'error'); return; }
+  
+  myChannel = {
+    id: 'canal_' + Date.now(),
+    name: name,
+    icon: icon,
+    followers: isOwner ? 10000 : 0,
+    verified: isOwner,
+    isDono: isOwner,
+    desc: 'Meu canal no IA Tube!',
+    videos: []
+  };
+  
+  saveUserData();
+  closeModal('channelModal');
+  showToast('Canal criado com sucesso! 🎉', 'success');
+  updateUserBar();
+}
+
+function openMyChannel() {
+  hideAllPages();
+  document.getElementById('pageMyChannel').classList.add('active');
+  renderMyChannel();
+}
+
+function renderMyChannel() {
+  const cont = document.getElementById('myChannelContent');
+  const verBadge = myChannel.isDono 
+    ? `<span class="verified-dono">👑</span>` 
+    : (myChannel.verified ? `<span class="verified-tikTok">✓</span>` : '');
+  
+  cont.innerHTML = `
+    <div class="channel-header">
+      <div class="channel-top">
+        <div class="channel-avatar">${myChannel.icon}</div>
+        <div class="channel-info">
+          <h1>${myChannel.name} ${verBadge}</h1>
+          <p class="channel-desc">${myChannel.desc}</p>
+          <div class="channel-stats">
+            <div class="stat-item"><div class="stat-value">${myChannel.followers}</div><div class="stat-label">Seguidores</div></div>
+            <div class="stat-item"><div class="stat-value">${myChannel.videos.length}</div><div class="stat-label">Vídeos</div></div>
+            <div class="stat-item"><div class="stat-value">0</div><div class="stat-label">Lives</div></div>
+          </div>
+          <div class="channel-actions">
+            <button class="btn btn-primary" onclick="openModal('videoModal')">➕ Postar Vídeo</button>
+            <button class="btn btn-success" onclick="openModal('liveModal')">🔴 Iniciar Live</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h3>Meus Vídeos</h3>
+    <div class="videos" id="myVideosList">
+      ${myChannel.videos.length === 0 ? '<p class="empty">Nenhum vídeo ainda. Seja o primeiro a postar! 🎬</p>' : 
+        myChannel.videos.map(v => `
+          <div class="video-card">
+            <div class="video-thumb">🎬<span class="video-duration">${v.dur}</span></div>
+            <div class="video-info">
+              <div class="video-title">${v.title}</div>
+              <div class="video-channel">${myChannel.icon} ${myChannel.name}</div>
+            </div>
+          </div>
+        `).join('')
+      }
+    </div>
+  `;
+}
+
+function postVideo() {
+  const title = document.getElementById('inpVideoTitle').value.trim();
+  const dur = document.getElementById('inpVideoDur').value.trim() || '0:00';
+  if (!title) { showToast('Digite o título!', 'error'); return; }
+  
+  myChannel.videos.unshift({ title: title, dur: dur });
+  saveUserData();
+  closeModal('videoModal');
+  showToast('Vídeo publicado com sucesso! 🎉', 'success');
+  renderMyChannel();
+}
+
+async function startLive() {
+  if (!myChannel) { showToast('Crie um canal primeiro!', 'error'); return; }
+  const title = document.getElementById('inpLiveTitle').value.trim() || 'Minha Live!';
+  closeModal('liveModal');
+  
+  try {
+    const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+    showToast('✅ Tela compartilhada! Transmitindo...', 'success');
+  } catch (err) {
+    showToast('✅ Live iniciada! (sem compartilhamento de tela)', 'success');
+  }
+  
+  liveActive = true;
+  liveViewers = Math.floor(Math.random() * 5) + 1;
+  
+  hideAllPages();
+  document.getElementById('pageLive').classList.add('active');
+  document.getElementById('liveTitleText').innerHTML = `🔴 ${title} — <span style="color:${'var(--green)'}">${liveViewers} espectadores</span>`;
+  
+  setTimeout(() => {
+    document.getElementById('floatingLive').classList.add('show');
+    document.getElementById('floatTitle').textContent = title;
+    document.getElementById('floatChannel').textContent = myChannel.name;
+    document.getElementById('floatViewerCount').textContent = liveViewers;
+    startBotChat();
+  }, 1000);
+}
+
+function startBotChat() {
+  const chat = document.getElementById('floatChat');
+  if (botChatInterval) clearInterval(botChatInterval);
+  
+  botChatInterval = setInterval(() => {
+    if (!liveActive) { clearInterval(botChatInterval); return; }
+    
+    const randomMsg = botMessages[Math.floor(Math.random() * botMessages.length)];
+    liveViewers++;
+    document.getElementById('floatViewerCount').textContent = liveViewers;
+    
+    chat.innerHTML += `<div class="msg"><span class="name">${randomMsg.name}:</span> ${randomMsg.msg}</div>`;
+    chat.scrollTop = chat.scrollHeight;
+  }, 5000);
+}
+
+function closeFloating() {
+  document.getElementById('floatingLive').classList.remove('show');
+}
+
+function goBackLive() {
+  hideAllPages();
+  document.getElementById('pageLive').classList.add('active');
+  document.getElementById('floatingLive').classList.remove('show');
+}
+
+function hideAllPages() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+}
+
+function goHome() {
+  hideAllPages();
+  document.getElementById('pageHome').classList.add('active');
+  closeFloating();
+  renderHome();
+}
+
+function renderHome() {
+  const livesCont = document.getElementById('livesContainer');
+  livesCont.innerHTML = sampleLives.map(l => `
+    <div class="live-card">
+      <div class="live-thumb">
+        <div class="live-badge">AO VIVO</div>
+        ${l.icon}
+      </div>
+      <div class="live-info">
+        <div class="live-name">${l.channel}</div>
+        <div class="live-title">${l.title}</div>
+        <div class="live-viewers">👁 ${l.viewers} assistindo</div>
+      </div>
+    </div>
+  `).join('');
+  
+  const vidCont = document.getElementById('videosContainer');
+  vidCont.innerHTML = sampleVideos.map(v => `
+    <div class="video-card">
+      <div class="video-thumb">
+        🎬
+        <span class="video-duration">${v.duration}</span>
+      </div>
+      <div class="video-info">
+        <div class="video-title">${v.title}</div>
+        <div class="video-channel">
+          ${v.icon} ${v.channel}
+          ${v.viral ? '<span style="color:var(--red); font-size:10px; margin-left:6px;">🔥 VIRAL</span>' : ''}
+        </div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">${v.views} visualizações</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function switchTab(tabName) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
+}
+
+// Funções do Painel do Dono
+function giveVerify() { showToast('✅ Verificado concedido!', 'success'); }
+function removeVerify() { showToast('ℹ️ Verificado removido', 'success'); }
+function addFollowers() { showToast('✅ Seguidores adicionados!', 'success'); }
+function removeFollowers() { showToast('ℹ️ Seguidores removidos', 'success'); }
+function banUser() { showToast('🚫 Usuário banido!', 'success'); }
+function unbanUser() { showToast('✅ Usuário desbanido!', 'success'); }
+function monetize() { showToast('💰 Canal monetizado!', 'success'); }
+function demonetize() { showToast('ℹ️ Monetização removida', 'success'); }
+function viralize() { showToast('🔥 Vídeo viralizado!', 'success'); }
+function deviralize() { showToast('ℹ️ Vídeo desviralizado', 'success'); }
+
+function handleSearch() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const results = document.getElementById('searchResults');
+  if (q.length < 2) { results.classList.remove('active'); return; }
+  
+  const matches = [...sampleChannels, ...(myChannel ? [myChannel] : [])].filter(c => 
+    c.name.toLowerCase().includes(q)
+  );
+  
+  if (matches.length > 0) {
+    results.innerHTML = matches.map(m => `<div class="search-item">${m.icon} ${m.name}</div>`).join('');
+    results.classList.add('active');
+  } else {
+    results.innerHTML = '<div class="search-item">Nenhum resultado encontrado</div>';
+    results.classList.add('active');
+  }
+}
+
+// Carregar dados salvos
+loadUserData();
+renderHome();
+
+// Arrastar janela flutuante
+let isDragging = false;
+let offsetX, offsetY;
+const dragHandle = document.getElementById('floatDragHandle');
+const floatWindow = document.getElementById('floatingLive');
+
+dragHandle.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  offsetX = e.clientX - floatWindow.getBoundingClientRect().left;
+  offsetY = e.clientY - floatWindow.getBoundingClientRect().top;
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  floatWindow.style.left = (e.clientX - offsetX) + 'px';
+  floatWindow.style.top = (e.clientY - offsetY) + 'px';
+  floatWindow.style.right = 'auto';
+  floatWindow.style.bottom = 'auto';
+});
+
+document.addEventListener('mouseup', () => isDragging = false);
+
+// Suporte toque para iPhone
+let touchStartX, touchStartY, touchStartRight, touchStartBottom;
+floatWindow.addEventListener('touchstart', (e) => {
+  const rect = floatWindow.getBoundingClientRect();
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+  touchStartRight = window.innerWidth - rect.right;
+  touchStartBottom = window.innerHeight - rect.bottom;
+});
+
+floatWindow.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  const dx = e.touches[0].clientX - touchStartX;
+  const dy = e.touches[0].clientY - touchStartY;
+  floatWindow.style.left = (rect.left + dx) + 'px';
+  floatWindow.style.top = (rect.top + dy) + 'px';
+  floatWindow.style.right = 'auto';
+  floatWindow.style.bottom = 'auto';
+}, { passive: false });
+
+</script>
+</body>
+</html>
