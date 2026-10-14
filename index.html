@@ -1,903 +1,829 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IA Tube 📺</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-    :root { 
-      --bg: #121217; --card: #1a1a24; --accent: #e044b0; 
-      --gold: #f59e0b; --green: #22c55e; --purple: #a855f7; 
-      --red: #ef4444; --tiktok-blue: #3897f0; --dono-purple: #c084fc;
-    }
-    body { background: var(--bg); color: #fff; min-height: 100vh; padding-bottom: 40px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IA Tube</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+:root {
+  --bg: #0f0f0f; --card: #1f1f1f; --hover: #2d2d2d;
+  --text: #fff; --text2: #aaa; --purple: #a855f7; --red: #ff3333;
+  --green: #22c55e; --gold: #ffc107; --blue: #3b82f6; --orange: #f97316;
+}
+body { background: var(--bg); color: var(--text); padding-top: 60px; padding-bottom: 90px; min-height: 100vh; }
 
-    header { 
-      background: var(--card); padding: 12px 20px; display: flex; align-items: center; 
-      justify-content: space-between; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid #333; 
-      position: sticky; top: 0; z-index: 100; 
-    }
-    .logo { font-size: 22px; font-weight: bold; color: var(--accent); cursor: pointer; }
-    .coins-display { 
-      background: rgba(245,158,11,0.15); border: 1px solid var(--gold); padding: 6px 14px; 
-      border-radius: 20px; font-size: 15px; color: var(--gold); font-weight: bold; display: flex; align-items: center; gap: 6px;
-    }
-    .user-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .btn { 
-      padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer; 
-      font-weight: bold; font-size: 14px; transition: 0.2s;
-    }
-    .btn:hover { transform: scale(1.03); }
-    .btn-primary { background: var(--accent); color: white; }
-    .btn-success { background: var(--green); color: white; }
-    .btn-secondary { background: #3a3a4a; color: white; }
-    .btn-purple { background: var(--dono-purple); color: white; }
-    .btn-red { background: var(--red); color: white; }
-    .btn-sm { padding: 5px 10px; font-size: 12px; }
-    .btn-xs { padding: 3px 8px; font-size: 11px; }
+header {
+  position: fixed; top: 0; left: 0; right: 0; height: 56px; background: var(--card);
+  display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
+  border-bottom: 1px solid #333; z-index: 100;
+}
+.logo { font-size: 20px; font-weight: bold; color: var(--purple); }
+.gemas-box {
+  display: flex; align-items: center; gap: 6px; background: rgba(255,193,7,0.15);
+  padding: 6px 12px; border-radius: 20px; border: 1px solid var(--gold);
+}
+.gemas-icon { font-size: 16px; }
+.gemas-count { font-weight: bold; color: var(--gold); font-size: 15px; }
+.btn {
+  padding: 10px 14px; border-radius: 6px; border: none; font-size: 14px; cursor: pointer;
+  font-weight: 500; transition: opacity 0.2s;
+}
+.btn:hover { opacity: 0.9; }
+.btn-purple { background: var(--purple); color: #fff; }
+.btn-red { background: var(--red); color: #fff; }
+.btn-green { background: var(--green); color: #fff; }
+.btn-gold { background: var(--gold); color: #000; font-weight: bold; }
+.btn-blue { background: var(--blue); color: #fff; }
+.btn-orange { background: var(--orange); color: #fff; }
+.btn-sm { padding: 6px 10px; font-size: 12px; }
 
-    main { padding: 20px; max-width: 1200px; margin: 0 auto; }
-    h2 { font-size: 20px; margin: 30px 0 15px; }
-    h3 { font-size: 17px; margin-bottom: 10px; }
+main { padding: 16px; max-width: 500px; margin: 0 auto; }
+.titulo-pagina { font-size: 20px; margin-bottom: 8px; }
+.subtitulo { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
+.abas { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.aba-btn {
+  padding: 8px 14px; background: transparent; color: var(--text2); border: none;
+  border-bottom: 2px solid transparent; cursor: pointer; font-size: 14px;
+}
+.aba-btn.ativa { color: var(--purple); border-bottom-color: var(--purple); }
 
-    /* Selos de Verificação */
-    .verified-blue {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 16px; height: 16px; background: var(--tiktok-blue);
-      border-radius: 50%; color: white; font-size: 10px; font-weight: bold;
-      margin-left: 4px; vertical-align: middle;
-    }
-    .verified-dono {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 18px; height: 18px; background: var(--dono-purple);
-      border-radius: 50%; color: white; font-size: 11px; font-weight: bold;
-      margin-left: 4px; box-shadow: 0 0 8px var(--dono-purple);
-      vertical-align: middle; animation: brilho 2s infinite;
-    }
-    @keyframes brilho {
-      0%,100% { box-shadow: 0 0 4px var(--dono-purple); }
-      50% { box-shadow: 0 0 12px var(--dono-purple); }
-    }
+.selo {
+  display: inline-block; font-size: 10px; padding: 1px 5px; border-radius: 3px;
+  margin-left: 5px; font-weight: bold;
+}
+.selo-bot { background: var(--purple); color: #fff; }
+.selo-verificado-azul { background: var(--blue); color: #fff; }
+.selo-verificado-roxo { background: var(--purple); color: #fff; }
 
-    /* Lives */
-    .lives { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; }
-    .live-card { 
-      min-width: 270px; background: var(--card); border-radius: 12px; overflow: hidden; 
-      cursor: pointer; border: 1px solid #333; transition: 0.2s;
-    }
-    .live-card:hover { transform: translateY(-4px); border-color: var(--accent); }
-    .live-thumb { 
-      height: 150px; background: linear-gradient(135deg, #2a1a3a, #1a2a3a); 
-      display: flex; align-items: center; justify-content: center; font-size: 50px; position: relative; 
-    }
-    .live-badge { 
-      position: absolute; top: 8px; left: 8px; background: var(--red); color: white; 
-      padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 4px; 
-    }
-    .live-badge::before { 
-      content: ''; width: 8px; height: 8px; background: white; border-radius: 50%; animation: pulse 1s infinite; 
-    }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
-    .live-info { padding: 12px; }
-    .live-channel { font-weight: bold; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; cursor: pointer; }
-    .live-title { font-size: 13px; color: #aaa; margin-bottom: 6px; }
-    .live-viewers { font-size: 12px; color: var(--green); font-weight: bold; }
+.card {
+  background: var(--card); border-radius: 12px; margin-bottom: 16px; overflow: hidden;
+}
+.thumb {
+  width: 100%; aspect-ratio: 16/9; background: #2a2a2a; display: flex;
+  align-items: center; justify-content: center; font-size: 50px;
+  position: relative; cursor: pointer;
+}
+.play-icon {
+  position: absolute; width: 70px; height: 70px; background: rgba(0,0,0,0.6);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 24px; color: #fff;
+}
+.live-tag {
+  position: absolute; top: 8px; left: 8px; background: var(--red); color: #fff;
+  font-size: 11px; font-weight: bold; padding: 3px 6px; border-radius: 2px;
+  animation: pulso 1.5s infinite;
+}
+@keyframes pulso { 0%,100%{opacity:1} 50%{opacity:0.6} }
+.info { padding: 12px; }
+.info h3 { font-size: 15px; margin-bottom: 4px; }
+.info p { font-size: 12px; color: var(--text2); margin-bottom: 10px; }
+.link-area {
+  background: #2a2a2a; padding: 8px; border-radius: 5px;
+  font-size: 11px; color: #ccc; word-break: break-all; margin-bottom: 8px;
+}
+.acoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.acoes .btn { font-size: 13px; padding: 6px 10px; flex: 1; min-width: 100px; }
 
-    /* Vídeos */
-    .videos { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 20px; }
-    .video-card { 
-      background: var(--card); border-radius: 12px; overflow: hidden; cursor: pointer; 
-      border: 1px solid #333; transition: 0.2s;
-    }
-    .video-card:hover { transform: translateY(-4px); border-color: var(--accent); }
-    .video-thumb { 
-      height: 150px; background: #2a2a3a; display: flex; align-items: center; justify-content: center; font-size: 50px; position: relative; 
-    }
-    .video-badge-ai {
-      position: absolute; top: 8px; left: 8px; background: linear-gradient(135deg, var(--purple), var(--accent));
-      color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;
-    }
-    .video-duration { 
-      position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.8); padding: 2px 6px; border-radius: 4px; font-size: 12px; 
-    }
-    .video-info { padding: 12px; }
-    .video-title { font-weight: bold; margin-bottom: 6px; font-size: 15px; }
-    .video-channel { font-size: 13px; color: #888; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; cursor: pointer; }
-    .video-stats { display: flex; gap: 12px; font-size: 12px; color: #777; }
-    .earn-note { font-size: 11px; color: var(--gold); margin-top: 6px; }
+.admin-panel {
+  background: linear-gradient(135deg, #2a1040, #1f1f1f); border: 2px solid var(--purple);
+  border-radius: 12px; padding: 16px; margin-bottom: 20px; display: none;
+}
+.admin-panel.mostrar { display: block; }
+.admin-panel h3 { color: var(--purple); margin-bottom: 15px; font-size: 16px; }
+.admin-section { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #333; }
+.admin-section h4 { font-size: 14px; margin-bottom: 10px; color: var(--text2); }
+.usuario-item {
+  padding: 10px; background: #2a2a2a; border-radius: 6px; margin-bottom: 8px;
+  font-size: 13px;
+}
+.busca-input {
+  width: 100%; padding: 10px; background: #2a2a2a; border: none; border-radius: 6px;
+  color: #fff; margin-bottom: 10px; font-size: 14px;
+}
 
-    /* Páginas */
-    .page { display: none; }
-    .page.active { display: block; }
-    .back { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); cursor: pointer; margin-bottom: 20px; }
+.loja-bloqueada { text-align: center; padding: 60px 20px; color: var(--text2); }
+.loja-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.loja-item {
+  background: var(--card); border-radius: 10px; padding: 16px; text-align: center;
+  border: 1px solid #333;
+}
+.loja-item.loja-destaque { border-color: var(--gold); }
+.loja-item h4 { font-size: 14px; margin-bottom: 6px; }
+.loja-item p { font-size: 11px; color: var(--text2); margin-bottom: 8px; }
+.preco { font-size: 16px; font-weight: bold; color: var(--gold); margin-bottom: 10px; }
+.loja-tag { font-size: 10px; background: var(--gold); color: #000; padding: 2px 6px; border-radius: 3px; display: inline-block; margin-bottom: 8px; }
 
-    /* Perfil do Canal */
-    .channel-header { background: var(--card); padding: 25px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #333; }
-    .channel-top { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
-    .channel-avatar { 
-      width: 80px; height: 80px; border-radius: 50%; background: var(--accent); 
-      display: flex; align-items: center; justify-content: center; font-size: 40px; flex-shrink: 0;
-    }
-    .channel-info h1 { font-size: 22px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .channel-stats { display: flex; gap: 25px; margin: 15px 0; flex-wrap: wrap; }
-    .stat-item { text-align: center; }
-    .stat-value { font-size: 22px; font-weight: bold; }
-    .stat-label { font-size: 11px; color: #888; text-transform: uppercase; }
-    .channel-desc { color: #aaa; margin: 10px 0; }
+.modal-fundo {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none;
+  align-items: center; justify-content: center; z-index: 200; padding: 20px;
+}
+.modal-fundo.abrir { display: flex; }
+.modal { background: var(--card); padding: 24px; border-radius: 12px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; }
+.modal-topo { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.fechar { background: none; border: none; color: var(--text2); font-size: 24px; cursor: pointer; line-height: 1; }
+input, textarea {
+  width: 100%; padding: 12px; background: #2a2a2a; border: none; border-radius: 6px;
+  color: #fff; font-size: 14px; margin-bottom: 12px;
+}
+.dica { font-size: 12px; color: var(--text2); margin-bottom: 15px; line-height: 1.5; }
+.modal .btn { width: 100%; margin-top: 5px; }
+.erro { color: var(--red); font-size: 13px; margin-bottom: 10px; display: none; }
+.erro.mostrar { display: block; }
 
-    /* Modal */
-    .modal { 
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; 
-      z-index: 1000; padding: 20px; overflow-y: auto;
-    }
-    .modal.active { display: flex; }
-    .modal-content { background: var(--card); padding: 25px; border-radius: 12px; max-width: 450px; width: 100%; border: 1px solid #444; }
-    .modal-title { font-size: 18px; margin-bottom: 15px; }
-    .modal-close { float: right; font-size: 22px; cursor: pointer; color: #888; margin-top: -5px; }
-    .modal-input { width: 100%; padding: 10px; border-radius: 6px; border: none; background: #2a2a3a; color: white; margin-bottom: 12px; font-size: 14px; }
-    label { font-size: 13px; color: #aaa; display: block; margin-bottom: 5px; }
-    .hidden { display: none !important; }
+.nav-bottom {
+  position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); border-top: 1px solid #333;
+  display: flex; justify-content: space-around; padding: 10px 0; z-index: 100;
+}
+.nav-item { text-align: center; font-size: 11px; color: var(--text2); cursor: pointer; }
+.nav-item span { font-size: 22px; display: block; margin-bottom: 2px; }
 
-    /* Painel Admin */
-    .admin-tabs { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-    .admin-tab { 
-      padding: 6px 12px; background: #2a2a3a; border-radius: 6px; cursor: pointer; font-size: 13px; 
-    }
-    .admin-tab.active { background: var(--dono-purple); font-weight: bold; }
-    .admin-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
-    .admin-row input { flex: 1; min-width: 120px; padding: 6px 10px; border-radius: 4px; border: none; background: #2a2a3a; color: white; }
-    .admin-section { margin-bottom: 18px; padding-bottom: 15px; border-bottom: 1px solid #333; }
-    .admin-section h4 { font-size: 14px; margin-bottom: 10px; color: var(--dono-purple); }
-
-    /* Toast */
-    .toast { 
-      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
-      background: var(--card); border: 1px solid var(--gold); color: var(--gold); padding: 12px 24px; 
-      border-radius: 8px; z-index: 9999; opacity: 0; transition: 0.3s; font-weight: bold;
-    }
-    .toast.show { opacity: 1; }
-
-    /* Página de vídeo/live */
-    .video-player-page { background: #000; border-radius: 12px; padding: 40px; text-align: center; margin-bottom: 20px; }
-    .like-btn { background: none; border: none; color: #888; cursor: pointer; font-size: 18px; }
-    .like-btn.liked { color: var(--accent); }
-    .ai-note { 
-      display: inline-block; background: rgba(168,85,247,0.15); border: 1px solid var(--purple);
-      padding: 4px 10px; border-radius: 12px; font-size: 12px; color: var(--purple); margin-top: 10px;
-    }
-  </style>
+.mensagem {
+  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+  background: var(--card); border: 1px solid var(--purple); color: var(--purple);
+  padding: 12px 20px; border-radius: 6px; opacity: 0; transition: opacity 0.3s;
+  z-index: 300; font-size: 14px; text-align: center; max-width: 90%;
+}
+.mensagem.mostrar { opacity: 1; }
+.hidden { display: none !important; }
+</style>
 </head>
 <body>
 
-<!-- Toast -->
-<div id="toast" class="toast"></div>
+<div id="mensagemTela" class="mensagem"></div>
 
-<!-- Modal Login -->
-<div id="loginModal" class="modal">
-  <div class="modal-content">
-    <span class="modal-close" onclick="closeModal('loginModal')">✕</span>
-    <h3 class="modal-title">🎬 Entrar</h3>
-    <label>Seu nome</label>
-    <input type="text" id="inpNome" class="modal-input" placeholder="Digite seu nome...">
-    <label style="display:flex; align-items:center; gap:8px; margin-bottom:10px; cursor:pointer;">
-      <input type="checkbox" id="chkOwner" onchange="toggleOwnerPass()">
-      <span>👑 Sou o Dono</span>
-    </label>
-    <div id="ownerPassWrap" class="hidden">
-      <label>Senha do Dono</label>
-      <input type="password" id="ownerPass" class="modal-input" placeholder="Digite a senha...">
+<div id="modalLogin" class="modal-fundo">
+  <div class="modal">
+    <div class="modal-topo">
+      <h3 id="tituloLogin">🔐 Entrar</h3>
+      <button class="fechar" onclick="fecharModal('modalLogin')">&times;</button>
     </div>
-    <button class="btn btn-primary" style="width:100%;" onclick="doLogin()">Entrar ✅</button>
+    <p id="subLogin" class="dica">Digite seu nome de canal e senha para entrar</p>
+    <p id="erroLogin" class="erro"></p>
+    <input type="text" id="nomeCanal" placeholder="Nome do seu canal">
+    <input type="password" id="senhaCanal" placeholder="Sua senha">
+    <button id="btnEntrar" class="btn btn-purple" onclick="fazerLogin()">➡️ Entrar</button>
+    <button class="btn btn-green" style="margin-top:10px" onclick="mostrarCriarConta()">📝 Criar conta nova</button>
+    <button class="btn" style="margin-top:8px;background:#333" onclick="mostrarLogin()">Já tenho conta</button>
   </div>
 </div>
 
-<!-- Modal Criar Canal -->
-<div id="createChannelModal" class="modal">
-  <div class="modal-content">
-    <span class="modal-close" onclick="closeModal('createChannelModal')">✕</span>
-    <h3 class="modal-title">📢 Criar Meu Canal</h3>
-    <label>Nome do canal</label>
-    <input type="text" id="myChannelName" class="modal-input" placeholder="Meu Canal Incrível">
-    <label>Emoji do canal</label>
-    <input type="text" id="myChannelEmoji" class="modal-input" placeholder="🎮" maxlength="2">
-    <label>Descrição</label>
-    <input type="text" id="myChannelDesc" class="modal-input" placeholder="Falo sobre jogos e tecnologia!">
-    <button class="btn btn-primary" style="width:100%;" onclick="criarMeuCanal()">Criar Canal ✅</button>
+<div id="modalPostar" class="modal-fundo">
+  <div class="modal">
+    <div class="modal-topo">
+      <h3>📤 Postar Vídeo</h3>
+      <button class="fechar" onclick="fecharModal('modalPostar')">&times;</button>
+    </div>
+    <input type="text" id="tituloVideo" placeholder="Título do vídeo">
+    <input type="text" id="linkVideo" placeholder="Link do YouTube">
+    <button class="btn btn-purple" onclick="postarVideo()">✅ Publicar</button>
   </div>
 </div>
 
-<!-- Modal Painel Admin -->
-<div id="adminModal" class="modal">
-  <div class="modal-content" style="max-width:480px;">
-    <span class="modal-close" onclick="closeModal('adminModal')">✕</span>
-    <h3 class="modal-title" style="color:var(--dono-purple);">👑 Painel do Dono</h3>
-    
-    <div class="admin-tabs">
-      <div class="admin-tab active" onclick="switchAdminTab('verify')">Verificar</div>
-      <div class="admin-tab" onclick="switchAdminTab('stats')">Estatísticas</div>
+<div id="modalLive" class="modal-fundo">
+  <div class="modal">
+    <div class="modal-topo">
+      <h3>🔴 Criar Live</h3>
+      <button class="fechar" onclick="fecharModal('modalLive')">&times;</button>
     </div>
-    
-    <div id="tabVerify" class="admin-tab-content">
-      <div class="admin-section">
-        <h4>✅ Dar Verificado Azul</h4>
-        <div class="admin-row">
-          <input type="text" id="verifyTarget" placeholder="Nome do canal">
-          <button class="btn btn-sm btn-primary" onclick="darVerificado()">Dar ✅</button>
-          <button class="btn btn-sm btn-secondary" onclick="removerVerificado()">Remover</button>
-        </div>
-      </div>
-      <div class="admin-section">
-        <h4>💜 Dar Verificado Dono (Roxo)</h4>
-        <div class="admin-row">
-          <input type="text" id="verifyDonoTarget" placeholder="Nome do canal">
-          <button class="btn btn-sm btn-purple" onclick="darVerificadoDono()">Dar 💜</button>
-          <button class="btn btn-sm btn-secondary" onclick="removerVerificadoDono()">Remover</button>
-        </div>
-      </div>
-    </div>
-    
-    <div id="tabStats" class="admin-tab-content hidden">
-      <div class="admin-section">
-        <h4>📊 Estatísticas do Site</h4>
-        <p style="margin-bottom:8px;">👤 Total de canais: <strong id="statCanais">0</strong></p>
-        <p style="margin-bottom:8px;">🎬 Total de vídeos: <strong id="statVideos">0</strong></p>
-        <p>🔴 Lives agora: <strong id="statLives">0</strong></p>
-      </div>
-    </div>
+    <input type="text" id="tituloLive" placeholder="Título da live">
+    <input type="text" id="linkLive" placeholder="Link da live no YouTube">
+    <button class="btn btn-red" onclick="criarLive()">🔴 Iniciar Live</button>
   </div>
 </div>
 
-<!-- Header -->
-<header>
-  <div class="logo" onclick="goHome()">📺 IA Tube</div>
-  <div class="coins-display" id="coinsDisplay">💰 0</div>
-  <div class="user-bar" id="userBar">
-    <button class="btn btn-primary" onclick="openModal('loginModal')">Entrar</button>
+<div id="modalPerfil" class="modal-fundo">
+  <div class="modal">
+    <div class="modal-topo">
+      <h3>👤 Meu Canal</h3>
+      <button class="fechar" onclick="fecharModal('modalPerfil')">&times;</button>
+    </div>
+    <div id="conteudoPerfil"></div>
+  </div>
+</div>
+
+<header id="cabecalhoPrincipal" class="hidden">
+  <h1 class="logo">▶ IA Tube</h1>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="gemas-box">
+      <span class="gemas-icon">💎</span>
+      <span class="gemas-count" id="contadorGemas">0</span>
+    </div>
+    <button class="btn" style="background:#333;padding:6px 10px;font-size:13px;" onclick="abrirModal('modalPerfil')" id="nomeUsuarioTopo">Entrar</button>
   </div>
 </header>
 
-<main>
-  <!-- Página Inicial -->
-  <div id="pageHome" class="page active">
-    <h2>🔴 Lives agora</h2>
-    <div class="lives" id="livesContainer"></div>
+<div id="telaInicial" style="padding-top:100px;text-align:center;max-width:400px;margin:0 auto;padding:40px 20px;">
+  <h1 style="font-size:28px;color:var(--purple);margin-bottom:10px;">▶ IA Tube</h1>
+  <p style="color:var(--text2);margin-bottom:40px;">Assista vídeos e lives, ganhe gemas e divirta-se!</p>
+  <button class="btn btn-purple" style="width:100%;padding:14px;font-size:16px;margin-bottom:12px;" onclick="abrirModal('modalLogin')">🔐 Entrar / Criar conta</button>
+</div>
 
-    <h2>🎬 Vídeos</h2>
-    <div class="videos" id="videosContainer"></div>
-  </div>
+<div id="conteudoPrincipal" class="hidden">
+  <main>
+    <h2 class="titulo-pagina" id="tituloPagina">🔥 Vídeos e Lives</h2>
+    <p class="subtitulo" id="subtituloPagina">Clique no vídeo → copie o link → cole no YouTube → assista → ganhe suas gemas! ✅</p>
 
-  <!-- Página Perfil do Canal -->
-  <div id="pageChannel" class="page">
-    <div class="back" onclick="goHome()">← Voltar</div>
-    <div id="channelProfile"></div>
-    <h3 style="margin-top:30px;">📹 Vídeos do Canal</h3>
-    <div class="videos" id="channelVideos" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));"></div>
-  </div>
-
-  <!-- Página de Vídeo -->
-  <div id="pageVideo" class="page">
-    <div class="back" onclick="goHome()">← Voltar</div>
-    <div class="video-player-page">
-      <div style="font-size:60px; margin-bottom:20px;" id="videoEmoji">🎬</div>
-      <h2 id="videoPageTitle"></h2>
-      <p id="videoPageChannel" style="color:#888; margin:8px 0; cursor:pointer;"></p>
-      <p id="videoPageViews" style="color:#666; font-size:14px;"></p>
-      <div id="aiBadgeContainer"></div>
-      <div style="margin-top:15px; display:flex; justify-content:center; gap:20px;">
-        <button id="likeBtn" class="like-btn" onclick="likeVideo()">❤️ <span id="likeCount">0</span></button>
+    <div id="painelAdmin" class="admin-panel">
+      <h3>🔧 ⚙️ PAINEL DE ADMINISTRAÇÃO — 💜 Dono da Plataforma</h3>
+      
+      <div class="abas" style="margin-bottom:12px;">
+        <button class="aba-btn ativa abas-admin" onclick="trocarAbaAdmin('usuarios')">👤 Usuários</button>
+        <button class="aba-btn abas-admin" onclick="trocarAbaAdmin('conteudo')">📺 Conteúdo</button>
+        <button class="aba-btn abas-admin" onclick="trocarAbaAdmin('config')">⚙️ Config</button>
       </div>
-      <p class="earn-note" style="margin-top:15px;">💰 +2 moedas assistindo • +3 moedas curtindo</p>
+      
+      <div id="admin-usuarios" class="admin-section">
+        <h4>Gerenciar Usuários e Selos</h4>
+        <input type="text" class="busca-input" id="buscaUsuario" placeholder="🔍 Buscar usuário..." oninput="filtrarUsuarios()">
+        <div id="listaUsuariosAdmin"></div>
+      </div>
+      
+      <div id="admin-conteudo" class="admin-section hidden">
+        <h4>Gerenciar Conteúdo</h4>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:10px;">Total de publicações de usuários: <span id="totalConteudos">0</span></p>
+        <button class="btn btn-red btn-sm" style="margin-bottom:8px;width:100%;" onclick="limparTodosConteudos()">🗑️ Limpar conteúdo de usuários</button>
+        <button class="btn btn-purple btn-sm" style="width:100%;" onclick="mostrarMensagem('✅ Bots continuam postando automaticamente')">🤖 Bots ativos</button>
+      </div>
+      
+      <div id="admin-config" class="admin-section hidden">
+        <h4>Configurações da Plataforma</h4>
+        <div style="background:#2a2a2a;padding:12px;border-radius:6px;margin-bottom:10px;">
+          <p style="font-size:13px;"><strong>💜 Selo Roxo:</strong> Exclusivo do dono</p>
+        </div>
+        <div style="background:#2a2a2a;padding:12px;border-radius:6px;margin-bottom:10px;">
+          <p style="font-size:13px;"><strong>🔵 Selo Azul:</strong> Automático aos 3.000 seguidores</p>
+        </div>
+        <div style="background:#2a2a2a;padding:12px;border-radius:6px;margin-bottom:10px;">
+          <p style="font-size:13px;"><strong>🏪 Loja:</strong> Liberada aos 3.000 seguidores</p>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- Página de Live -->
-  <div id="pageLive" class="page">
-    <div class="back" onclick="goHome()">← Voltar</div>
-    <div class="video-player-page">
-      <div style="font-size:60px; margin-bottom:20px;">🔴</div>
-      <h2 id="livePageTitle"></h2>
-      <p id="livePageChannel" style="color:#888; margin:8px 0; cursor:pointer;"></p>
-      <p id="livePageViewers" style="color:var(--green); font-weight:bold;"></p>
-      <p class="earn-note" style="margin-top:15px;">💰 +5 moedas a cada minuto assistindo!</p>
+    <div class="abas" id="abasPrincipais">
+      <button class="aba-btn ativa" onclick="trocarAbaPrincipal('todos', this)">Todos</button>
+      <button class="aba-btn" onclick="trocarAbaPrincipal('video', this)">📹 Vídeos</button>
+      <button class="aba-btn" onclick="trocarAbaPrincipal('live', this)">🔴 Lives</button>
+      <button class="aba-btn" onclick="trocarAbaPrincipal('ia', this)">🤖 Vídeos de IA</button>
+      <button class="aba-btn" onclick="trocarAbaPrincipal('loja', this)">🏪 Loja</button>
     </div>
-  </div>
-</main>
+
+    <div id="listaConteudo"></div>
+    
+    <div id="areaLoja" class="hidden">
+      <h3 class="titulo-pagina">🏪 Loja de Benefícios</h3>
+      <p class="subtitulo">Com gemas você compra itens para melhorar seu canal!</p>
+      
+      <div id="lojaBloqueada" class="loja-bloqueada">
+        <div style="font-size:48px;margin-bottom:15px;">🔒</div>
+        <h3>Loja bloqueada</h3>
+        <p>Você precisa de <strong>3.000 seguidores</strong> para acessar a loja.</p>
+      </div>
+      
+      <div id="lojaGrid" class="loja-grid hidden">
+        <div class="loja-item">
+          <h4>🎨 Cor do Perfil</h4>
+          <p>Personaliza a cor do seu canal</p>
+          <div class="preco">500 💎</div>
+          <button class="btn btn-gold btn-sm" style="width:100%;" onclick="comprarItem('Cor do Perfil', 500)">Comprar</button>
+        </div>
+        <div class="loja-item loja-destaque">
+          <span class="loja-tag">POPULAR</span>
+          <h4>✨ Destaque no Feed</h4>
+          <p>Por 24h em destaque</p>
+          <div class="preco">800 💎</div>
+          <button class="btn btn-gold btn-sm" style="width:100%;" onclick="comprarItem('Destaque no Feed', 800)">Comprar</button>
+        </div>
+        <div class="loja-item">
+          <h4>📊 Estatísticas Pro</h4>
+          <p>Dados detalhados do canal</p>
+          <div class="preco">1.200 💎</div>
+          <button class="btn btn-gold btn-sm" style="width:100%;" onclick="comprarItem('Estatísticas Pro', 1200)">Comprar</button>
+        </div>
+        <div class="loja-item">
+          <h4>🖼️ Moldura</h4>
+          <p>Estilo especial no perfil</p>
+          <div class="preco">300 💎</div>
+          <button class="btn btn-gold btn-sm" style="width:100%;" onclick="comprarItem('Moldura', 300)">Comprar</button>
+        </div>
+        <div class="loja-item">
+          <h4>📈 Impulsionar Canal</h4>
+          <p>Mais visibilidade por 7 dias</p>
+          <div class="preco">2.000 💎</div>
+          <button class="btn btn-gold btn-sm" style="width:100%;" onclick="comprarItem('Impulsionar Canal', 2000)">Comprar</button>
+        </div>
+        <div class="loja-item">
+          <h4>🔵 Selo Personalizado</h4>
+          <p>Seu selo com cor e texto</p>
+          <div class="preco">5.000 💎</div>
+          <button class="btn btn-gold btn-sm" style="width:100%;" onclick="comprarItem('Selo Personalizado', 5000)">Comprar</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="navPrincipal" class="nav-bottom hidden">
+  <div class="nav-item" onclick="rolarAoTopo()"><span>🏠</span>Início</div>
+  <div class="nav-item" onclick="abrirModal('modalPostar')"><span>📤</span>Postar</div>
+  <div class="nav-item" onclick="abrirModal('modalLive')"><span>🔴</span>Live</div>
+  <div class="nav-item" onclick="trocarAbaPrincipal('loja', null)"><span>🏪</span>Loja</div>
+  <div class="nav-item" onclick="abrirModal('modalPerfil')"><span>👤</span>Canal</div>
+</div>
 
 <script>
-// ================= DADOS =================
-let usuario = { nome: '', dono: false, moedas: 0, meuCanal: null };
-let canais = [];
-let videos = [];
-let lives = [];
-let videoAtual = null;
-let liveAtual = null;
-let intervaloLive = null;
+const DADOS = {
+  DONO_NOME: 'progg_edits',
+  DONO_SENHA: 'progg_edits22_05_20_15_67',
+  GEMAS_POR_VIDEO: 5,
+  GEMAS_POR_LIVE: 10,
+  SEGUIDORES_SELO_AZUL: 3000,
+  SEGUIDORES_LOJA: 3000,
+  BOT_INTERVALO: 600000
+};
 
-// Lista de bots/canais
-const botsOriginais = [
-  { id: 'bot1', nome: 'GamerLima', emoji: '🎮', verificado: 'azul', desc: 'Jogando tudo que aparece!' },
-  { id: 'bot2', nome: 'Sarah_IA', emoji: '🤖', verificado: 'nenhum', desc: 'Vídeos feitos por inteligência artificial!' },
-  { id: 'bot3', nome: 'TechPedro', emoji: '💻', verificado: 'azul', desc: 'Tecnologia e programação' },
-  { id: 'bot4', nome: 'Valorant_IA', emoji: '🎯', verificado: 'nenhum', desc: 'A IA jogando Valorant melhor que você!' },
-  { id: 'bot5', nome: 'Roblox_IA_Oficial', emoji: '🏠', verificado: 'azul', desc: 'A IA explorando o Roblox' },
-  { id: 'bot6', nome: 'Minecraft_IA', emoji: '⛏️', verificado: 'nenhum', desc: 'A IA construindo mundos incríveis' },
-  { id: 'bot7', nome: 'FreeFire_IA', emoji: '🔥', verificado: 'nenhum', desc: 'IA jogando Free Fire — será que ganha?' },
-  { id: 'bot8', nome: 'BeatrizVlogs', emoji: '📸', verificado: 'azul', desc: 'Meu dia a dia e dicas' },
-  { id: 'bot9', nome: 'Futebol_IA', emoji: '⚽', verificado: 'nenhum', desc: 'Simulando partidas com IA' },
-  { id: 'bot10', nome: 'Carros_IA', emoji: '🏎️', verificado: 'nenhum', desc: 'IA pilotando carros' },
+let usuarioAtual = null;
+let contas = JSON.parse(localStorage.getItem('contas') || '{}');
+let conteudos = [];
+let historicoAssistidos = JSON.parse(localStorage.getItem('historicoAssistidos') || '[]');
+let abaAtual = 'todos';
+let botTimer = null;
+
+const BOTS_CANAIS = [
+  { nome: 'GamerLima', seguidores: 5420, ehBot: true },
+  { nome: 'Sarah_Art', seguidores: 8930, ehBot: true },
+  { nome: 'Tech_Pedro', seguidores: 12150, ehBot: true },
+  { nome: 'Mundo_Musica', seguidores: 3200, ehBot: true },
+  { nome: 'Cozinha_Divertida', seguidores: 7600, ehBot: true }
 ];
 
-// Dados de vídeos por jogo/IA
-const jogosIA = [
-  { nome: 'Valorant', emoji: '🎯', canal: 'Valorant_IA', titulos: [
-    '🤖 IA jogando Valorant — Rankeada subindo!',
-    'A IA consegue ganhar no Valorant? 🎯',
-    'Treinei uma IA para jogar Valorant sozinha!',
-    'IA vs Humanos — quem vence no Valorant?',
-  ]},
-  { nome: 'Roblox', emoji: '🏠', canal: 'Roblox_IA_Oficial', titulos: [
-    '🤖 A IA explorando o Roblox! Veja o que achou',
-    'Treinei uma IA para jogar Roblox sozinha 🏠',
-    'A IA criou seu próprio jogo no Roblox!',
-    'Desafio: A IA completa este obby no Roblox?',
-  ]},
-  { nome: 'Minecraft', emoji: '⛏️', canal: 'Minecraft_IA', titulos: [
-    '🤖 A IA construiu uma casa automática no Minecraft!',
-    'Treinei uma IA para sobreviver no Minecraft ⛏️',
-    'A IA explorou uma caverna no Minecraft — olha o que achou!',
-    'A IA planta e colhe sozinha no Minecraft!',
-  ]},
-  { nome: 'Free Fire', emoji: '🔥', canal: 'FreeFire_IA', titulos: [
-    '🤖 A IA jogando Free Fire — será que faz Booyah? 🔥',
-    'Treinei uma IA para jogar Free Fire sozinha!',
-    'IA jogando contra jogadores reais no Free Fire',
-    'Quanto a IA consegue sobreviver no Free Fire?',
-  ]},
-  { nome: 'Futebol', emoji: '⚽', canal: 'Futebol_IA', titulos: [
-    '🤖 Simulando um jogo inteiro com IA ⚽',
-    'A IA previu o resultado do jogo? Veja!',
-  ]},
-  { nome: 'Carros', emoji: '🏎️', canal: 'Carros_IA', titulos: [
-    '🤖 A IA pilotando carros em alta velocidade! 🏎️',
-    'Treinei uma IA para dirigir sozinha',
-  ]},
+const LINKS_EXEMPLO = [
+  'https://www.youtube.com/watch?v=jNQXAC9IVRw',
+  'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  'https://www.youtube.com/watch?v=M7lc1UVf-VE',
+  'https://www.youtube.com/watch?v=9bZkp7q19f0'
 ];
 
-const titulosComuns = [
-  'Como subir de rank rápido! 💡',
-  'Melhores momentos da semana 🎯',
-  'Tutorial completo para iniciantes 📖',
-  'Testando coisas novas no jogo 🧪',
-  'Dicas que ninguém te conta! 🤫',
-  'Top 5 truques que você precisa saber ✅',
-];
+const TEMAS = {
+  video: [
+    'Melhores momentos de gameplay', 'Tutorial completo passo a passo',
+    'Dicas que vão mudar seu jogo', 'Reagindo a vídeos incríveis',
+    'Desafio: consegui fazer isso!'
+  ],
+  live: [
+    '🔴 AO VIVO — Jogando junto com vocês!', '🔴 Live especial — tirando dúvidas!',
+    '🔴 Transmissão ao vivo — não perca!', '🔴 Conversa ao vivo com a galera!'
+  ]
+};
 
-// ================= INICIALIZAR =================
-function init() {
-  canais = JSON.parse(JSON.stringify(botsOriginais));
-  gerarConteudo();
-  renderizarTudo();
-  iniciarBots();
-  atualizarMoedasDisplay();
-  atualizarEstatisticasAdmin();
+function abrirModal(id) { document.getElementById(id).classList.add('abrir'); }
+function fecharModal(id) { 
+  document.getElementById(id).classList.remove('abrir'); 
+  document.getElementById('erroLogin').classList.remove('mostrar'); 
 }
-
-function gerarConteudo() {
-  videos = [];
-  lives = [];
-  
-  // Vídeos dos bots normais
-  canais.forEach((canal, i) => {
-    if (!jogosIA.some(j => j.canal === canal.nome)) {
-      videos.push({
-        id: `vid-${i}`,
-        titulo: titulosComuns[i % titulosComuns.length],
-        canal: canal.nome,
-        canalId: canal.id,
-        emoji: canal.emoji,
-        verificado: canal.verificado,
-        visualizacoes: Math.floor(Math.random() * 15000) + 100,
-        curtidas: Math.floor(Math.random() * 2000) + 50,
-        duracao: `${Math.floor(Math.random() * 15) + 1}:${String(Math.floor(Math.random() * 60)).padStart(2,'0')}`,
-        ehIA: false,
-        jogo: null,
-      });
-    }
-  });
-
-  // Vídeos ESPECÍFICOS da IA por jogo
-  jogosIA.forEach(jogo => {
-    const canal = canais.find(c => c.nome === jogo.canal);
-    if (canal) {
-      jogo.titulos.forEach((titulo, ti) => {
-        videos.push({
-          id: `vid-ia-${jogo.nome}-${ti}`,
-          titulo: titulo,
-          canal: canal.nome,
-          canalId: canal.id,
-          emoji: jogo.emoji,
-          verificado: canal.verificado,
-          visualizacoes: Math.floor(Math.random() * 8000) + 200,
-          curtidas: Math.floor(Math.random() * 1500) + 30,
-          duracao: `${Math.floor(Math.random() * 10) + 2}:${String(Math.floor(Math.random() * 60)).padStart(2,'0')}`,
-          ehIA: true,
-          jogo: jogo.nome,
-        });
-      });
-    }
-  });
-
-  // Lives
-  const canaisLive = canais.slice(0, 5);
-  canaisLive.forEach((bot, i) => {
-    lives.push({
-      id: `live-${i}`,
-      titulo: jogosIA.some(j => j.canal === bot.nome) 
-        ? `🤖 A IA tá jogando agora ao vivo!`
-        : `Jogando junto com vocês! Venham! 🎮`,
-      canal: bot.nome,
-      canalId: bot.id,
-      emoji: bot.emoji,
-      verificado: bot.verificado,
-      espectadores: Math.floor(Math.random() * 500) + 20,
-    });
-  });
-
-  videos.sort(() => Math.random() - 0.5);
+function mostrarMensagem(texto, tempo = 3000) {
+  const m = document.getElementById('mensagemTela');
+  m.textContent = texto;
+  m.classList.add('mostrar');
+  setTimeout(() => m.classList.remove('mostrar'), tempo);
 }
-
-function renderizarTudo() {
-  renderizarLives();
-  renderizarVideos();
+function rolarAoTopo() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function aleatorio(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function salvarDados() {
+  localStorage.setItem('contas', JSON.stringify(contas));
+  localStorage.setItem('historicoAssistidos', JSON.stringify(historicoAssistidos));
 }
-
-function renderizarLives() {
-  const container = document.getElementById('livesContainer');
-  container.innerHTML = '';
-  
-  if (lives.length === 0) {
-    container.innerHTML = '<p style="color:#666;">Nenhuma live no momento.</p>';
-    return;
+function corrigirLink(url) {
+  if (url.includes('youtu.be/')) {
+    const id = url.split('youtu.be/')[1].split('?')[0];
+    return 'https://www.youtube.com/watch?v=' + id;
   }
-
-  lives.forEach(live => {
-    const card = document.createElement('div');
-    card.className = 'live-card';
-    card.onclick = () => abrirLive(live);
-    card.innerHTML = `
-      <div class="live-thumb">
-        <div class="live-badge">AO VIVO</div>
-        ${live.emoji}
-      </div>
-      <div class="live-info">
-        <div class="live-channel">
-          <span onclick="event.stopPropagation(); abrirCanal('${live.canalId}')">${live.canal}</span>
-          ${getVerificadoIcon(live.verificado)}
-        </div>
-        <div class="live-title">${live.titulo}</div>
-        <div class="live-viewers">👁 ${live.espectadores} assistindo</div>
-      </div>
-    `;
-    container.appendChild(card);
-  });
+  return url;
 }
 
-function renderizarVideos() {
-  const container = document.getElementById('videosContainer');
-  container.innerHTML = '';
-
-  videos.forEach(video => {
-    const card = document.createElement('div');
-    card.className = 'video-card';
-    card.onclick = () => abrirVideo(video);
-    card.innerHTML = `
-      <div class="video-thumb">
-        ${video.emoji}
-        ${video.ehIA ? '<span class="video-badge-ai">🤖 IA</span>' : ''}
-        <span class="video-duration">${video.duracao}</span>
-      </div>
-      <div class="video-info">
-        <div class="video-title">${video.titulo}</div>
-        <div class="video-channel">
-          <span onclick="event.stopPropagation(); abrirCanal('${video.canalId}')">${video.canal}</span>
-          ${getVerificadoIcon(video.verificado)}
-        </div>
-        <div class="video-stats">
-          <span class="stat-item">👁 ${formatarNumero(video.visualizacoes)}</span>
-          <span class="stat-item">❤️ ${formatarNumero(video.curtidas)}</span>
-        </div>
-      </div>
-    `;
-    container.appendChild(card);
-  });
+function mostrarCriarConta() {
+  document.getElementById('tituloLogin').textContent = '📝 Criar Conta';
+  document.getElementById('subLogin').textContent = 'Escolha seu nome de canal e senha';
+  document.getElementById('btnEntrar').textContent = '✅ Criar conta';
+  document.getElementById('btnEntrar').onclick = criarConta;
+}
+function mostrarLogin() {
+  document.getElementById('tituloLogin').textContent = '🔐 Entrar';
+  document.getElementById('subLogin').textContent = 'Digite seu nome de canal e senha';
+  document.getElementById('btnEntrar').textContent = '➡️ Entrar';
+  document.getElementById('btnEntrar').onclick = fazerLogin;
+}
+function mostrarErro(texto) {
+  const el = document.getElementById('erroLogin');
+  el.textContent = texto;
+  el.classList.add('mostrar');
 }
 
-function getVerificadoIcon(tipo) {
-  if (tipo === 'azul') return '<span class="verified-blue">✓</span>';
-  if (tipo === 'dono') return '<span class="verified-dono">👑</span>';
-  return '';
-}
-
-// ================= PÁGINAS =================
-function abrirCanal(canalId) {
-  const canal = canais.find(c => c.id === canalId);
-  if (!canal) return;
-
-  esconderPaginas();
-  document.getElementById('pageChannel').classList.add('active');
-
-  const canalVideos = videos.filter(v => v.canalId === canalId);
+function criarConta() {
+  const nome = document.getElementById('nomeCanal').value.trim();
+  const senha = document.getElementById('senhaCanal').value.trim();
   
-  document.getElementById('channelProfile').innerHTML = `
-    <div class="channel-header">
-      <div class="channel-top">
-        <div class="channel-avatar">${canal.emoji}</div>
-        <div>
-          <h1>${canal.nome} ${getVerificadoIcon(canal.verificado)}</h1>
-          <p class="channel-desc">${canal.desc || 'Canal de conteúdo'}</p>
-          <div class="channel-stats">
-            <div class="stat-item">
-              <div class="stat-value">${canalVideos.length}</div>
-              <div class="stat-label">Vídeos</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value">${Math.floor(Math.random() * 5000) + 100}</div>
-              <div class="stat-label">Inscritos</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value">${formatarNumero(canalVideos.reduce((s,v) => s + v.visualizacoes, 0))}</div>
-              <div class="stat-label">Visualizações</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  const container = document.getElementById('channelVideos');
-  container.innerHTML = '';
-  if (canalVideos.length === 0) {
-    container.innerHTML = '<p style="color:#666;">Nenhum vídeo ainda.</p>';
-  } else {
-    canalVideos.forEach(video => {
-      const card = document.createElement('div');
-      card.className = 'video-card';
-      card.onclick = () => abrirVideo(video);
-      card.innerHTML = `
-        <div class="video-thumb" style="height:100px; font-size:35px;">
-          ${video.emoji}
-          ${video.ehIA ? '<span class="video-badge-ai" style="font-size:9px;">🤖 IA</span>' : ''}
-          <span class="video-duration" style="font-size:10px;">${video.duracao}</span>
-        </div>
-        <div class="video-info" style="padding:8px;">
-          <div class="video-title" style="font-size:13px;">${video.titulo}</div>
-          <div class="video-stats" style="margin-top:5px;">
-            <span class="stat-item">👁 ${formatarNumero(video.visualizacoes)}</span>
-          </div>
-        </div>
-      `;
-      container.appendChild(card);
-    });
-  }
-}
-
-function abrirVideo(video) {
-  if (!usuario.nome) {
-    mostrarToast('⚠️ Faça login primeiro para ganhar moedas!');
-    openModal('loginModal');
-    return;
-  }
+  if (!nome || !senha) { mostrarErro('⚠️ Preencha todos os campos!'); return; }
+  if (nome.length < 2) { mostrarErro('⚠️ Nome muito curto!'); return; }
+  if (nome === DADOS.DONO_NOME) { mostrarErro('⚠️ Este nome é reservado! Use "Entrar".'); return; }
+  if (contas[nome]) { mostrarErro('⚠️ Este nome já existe! Escolha outro.'); return; }
   
-  videoAtual = video;
-  liveAtual = null;
-  esconderPaginas();
-  document.getElementById('pageVideo').classList.add('active');
-  
-  document.getElementById('videoPageTitle').textContent = video.titulo;
-  document.getElementById('videoPageChannel').innerHTML = `
-    <span onclick="abrirCanal('${video.canalId}')">${video.canal}</span>
-    ${getVerificadoIcon(video.verificado)}
-  `;
-  document.getElementById('videoPageViews').textContent = `${formatarNumero(video.visualizacoes)} visualizações`;
-  document.getElementById('likeCount').textContent = formatarNumero(video.curtidas);
-  document.getElementById('likeBtn').classList.remove('liked');
-  document.getElementById('videoEmoji').textContent = video.emoji;
-  
-  // Badge IA
-  const badgeContainer = document.getElementById('aiBadgeContainer');
-  if (video.ehIA) {
-    badgeContainer.innerHTML = `<span class="ai-note">🤖 Vídeo gerado por IA — ${video.jogo}</span>`;
-  } else {
-    badgeContainer.innerHTML = '';
-  }
-  
-  ganharMoedas(2);
-  mostrarToast('+💰 2 moedas por assistir!');
-}
-
-function abrirLive(live) {
-  if (!usuario.nome) {
-    mostrarToast('⚠️ Faça login primeiro para ganhar moedas!');
-    openModal('loginModal');
-    return;
-  }
-  
-  liveAtual = live;
-  videoAtual = null;
-  esconderPaginas();
-  document.getElementById('pageLive').classList.add('active');
-  
-  document.getElementById('livePageTitle').textContent = live.titulo;
-  document.getElementById('livePageChannel').innerHTML = `
-    <span onclick="abrirCanal('${live.canalId}')">${live.canal}</span>
-    ${getVerificadoIcon(live.verificado)}
-  `;
-  document.getElementById('livePageViewers').textContent = `👁 ${live.espectadores} pessoas assistindo`;
-  
-  if (intervaloLive) clearInterval(intervaloLive);
-  let tempo = 0;
-  intervaloLive = setInterval(() => {
-    tempo++;
-    if (tempo % 60 === 0) {
-      ganharMoedas(5);
-      mostrarToast('+💰 5 moedas — obrigado por assistir!');
-    }
-    if (Math.random() < 0.15) {
-      live.espectadores += Math.floor(Math.random() * 10) - 4;
-      if (live.espectadores < 5) live.espectadores = 10;
-      document.getElementById('livePageViewers').textContent = `👁 ${live.espectadores} pessoas assistindo`;
-    }
-  }, 1000);
-}
-
-function likeVideo() {
-  if (!videoAtual) return;
-  
-  const btn = document.getElementById('likeBtn');
-  if (btn.classList.contains('liked')) {
-    mostrarToast('⚠️ Você já curtiu este vídeo!');
-    return;
-  }
-  
-  btn.classList.add('liked');
-  videoAtual.curtidas++;
-  document.getElementById('likeCount').textContent = formatarNumero(videoAtual.curtidas);
-  ganharMoedas(3);
-  mostrarToast('+💰 3 moedas por curtir! ❤️');
-}
-
-function goHome() {
-  if (intervaloLive) clearInterval(intervaloLive);
-  esconderPaginas();
-  document.getElementById('pageHome').classList.add('active');
-  renderizarTudo();
-}
-
-function esconderPaginas() {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-}
-
-// ================= MOEDAS =================
-function ganharMoedas(quantia) {
-  usuario.moedas += quantia;
-  atualizarMoedasDisplay();
-  localStorage.setItem('iatube-moedas', usuario.moedas);
-}
-
-function atualizarMoedasDisplay() {
-  document.getElementById('coinsDisplay').textContent = `💰 ${usuario.moedas}`;
-}
-
-// ================= BOTS DINÂMICOS =================
-function iniciarBots() {
-  setInterval(() => {
-    lives.forEach(live => {
-      const mudanca = Math.floor(Math.random() * 7) - 3;
-      live.espectadores = Math.max(5, live.espectadores + mudanca);
-    });
-    renderizarLives();
-  }, 8000);
-
-  // Novo vídeo da IA aparece de tempos em tempos
-  setInterval(() => {
-    const jogo = jogosIA[Math.floor(Math.random() * jogosIA.length)];
-    const canal = canais.find(c => c.nome === jogo.canal);
-    if (canal) {
-      const novoVid = {
-        id: `vid-ia-${Date.now()}`,
-        titulo: jogo.titulos[Math.floor(Math.random() * jogo.titulos.length)],
-        canal: canal.nome,
-        canalId: canal.id,
-        emoji: jogo.emoji,
-        verificado: canal.verificado,
-        visualizacoes: 0,
-        curtidas: 0,
-        duracao: `${Math.floor(Math.random() * 10) + 2}:${String(Math.floor(Math.random() * 60)).padStart(2,'0')}`,
-        ehIA: true,
-        jogo: jogo.nome,
-      };
-      videos.unshift(novoVid);
-      if (videos.length > 25) videos.pop();
-      renderizarVideos();
-      mostrarToast(`🤖 Novo vídeo de ${jogo.nome} da IA chegou!`);
-    }
-  }, 60000);
-}
-
-// ================= LOGIN E CANAL =================
-function toggleOwnerPass() {
-  document.getElementById('ownerPassWrap').classList.toggle('hidden');
-}
-
-function doLogin() {
-  const nome = document.getElementById('inpNome').value.trim();
-  if (!nome) { mostrarToast('⚠️ Digite seu nome!'); return; }
-
-  const ehDono = document.getElementById('chkOwner').checked;
-  const senha = document.getElementById('ownerPass').value;
-  
-  if (ehDono && senha !== 'progg_edits20_15_67') {
-    mostrarToast('❌ Senha incorreta!');
-    return;
-  }
-
-  usuario.nome = nome;
-  usuario.dono = ehDono;
-  
-  const salvas = localStorage.getItem('iatube-moedas');
-  usuario.moedas = salvas ? parseInt(salvas) : 0;
-  
-  atualizarMoedasDisplay();
-  closeModal('loginModal');
-  
-  let botoesExtra = '';
-  if (!usuario.meuCanal) {
-    botoesExtra += `<button class="btn btn-sm btn-success" onclick="openModal('createChannelModal')">📢 Meu Canal</button>`;
-  }
-  if (usuario.dono) {
-    botoesExtra += `<button class="btn btn-sm btn-purple" onclick="openModal('adminModal')">👑 Admin</button>`;
-  }
-  
-  document.getElementById('userBar').innerHTML = `
-    <span style="font-size:14px;">👤 ${nome} ${ehDono ? '👑' : ''}</span>
-    ${botoesExtra}
-    <button class="btn btn-sm btn-secondary" onclick="sair()">Sair</button>
-  `;
-  
-  mostrarToast(`✅ Bem-vindo, ${nome}!`);
-}
-
-function sair() {
-  usuario = { nome: '', dono: false, moedas: 0, meuCanal: null };
-  atualizarMoedasDisplay();
-  document.getElementById('userBar').innerHTML = '<button class="btn btn-primary" onclick="openModal(\'loginModal\')">Entrar</button>';
-  goHome();
-  mostrarToast('👋 Até logo!');
-}
-
-function criarMeuCanal() {
-  const nome = document.getElementById('myChannelName').value.trim();
-  const emoji = document.getElementById('myChannelEmoji').value.trim() || '📺';
-  const desc = document.getElementById('myChannelDesc').value.trim() || 'Meu canal no IA Tube!';
-  
-  if (!nome) { mostrarToast('⚠️ Digite um nome para o canal!'); return; }
-  
-  const novoCanal = {
-    id: `meu-${Date.now()}`,
-    nome: nome,
-    emoji: emoji,
-    desc: desc,
-    verificado: 'nenhum',
+  contas[nome] = {
+    senha: senha, gemas: 0, seguidores: Math.floor(Math.random() * 50) + 5,
+    criadoEm: Date.now(), temSeloAzul: false, compras: []
   };
+  salvarDados();
   
-  canais.unshift(novoCanal);
-  usuario.meuCanal = novoCanal;
+  mostrarMensagem('✅ Conta criada! Bem-vindo, ' + nome + '!');
+  document.getElementById('nomeCanal').value = '';
+  document.getElementById('senhaCanal').value = '';
+  fecharModal('modalLogin');
+  entrarComoUsuario(nome);
+}
+
+function fazerLogin() {
+  const nome = document.getElementById('nomeCanal').value.trim();
+  const senha = document.getElementById('senhaCanal').value.trim();
   
-  closeModal('createChannelModal');
-  mostrarToast(`✅ Canal "${nome}" criado com sucesso!`);
+  if (!nome || !senha) { mostrarErro('⚠️ Digite seu nome e senha!'); return; }
   
-  // Atualizar barra do usuário
-  let botoes = `<span style="font-size:14px;">👤 ${usuario.nome} ${usuario.dono ? '👑' : ''}</span>`;
-  if (usuario.dono) {
-    botoes += `<button class="btn btn-sm btn-purple" onclick="openModal('adminModal')">👑 Admin</button>`;
+  if (nome === DADOS.DONO_NOME && !contas[nome]) {
+    if (senha === DADOS.DONO_SENHA) {
+      contas[nome] = { senha: senha, gemas: 0, seguidores: 99999, criadoEm: Date.now(), temSeloAzul: false, compras: [] };
+      salvarDados();
+    } else {
+      mostrarErro('⚠️ Senha incorreta do dono!');
+      return;
+    }
   }
-  botoes += `<button class="btn btn-sm btn-secondary" onclick="sair()">Sair</button>`;
-  document.getElementById('userBar').innerHTML = botoes;
   
-  atualizarEstatisticasAdmin();
-  renderizarTudo();
+  if (!contas[nome]) { mostrarErro('⚠️ Canal não encontrado! Crie uma conta nova.'); return; }
+  if (contas[nome].senha !== senha) { mostrarErro('⚠️ Senha incorreta!'); return; }
+  
+  fecharModal('modalLogin');
+  document.getElementById('nomeCanal').value = '';
+  document.getElementById('senhaCanal').value = '';
+  entrarComoUsuario(nome);
 }
 
-// ================= PAINEL DE ADMIN =================
-function switchAdminTab(tab) {
-  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-  event.target.classList.add('active');
-  
-  document.getElementById('tabVerify').classList.toggle('hidden', tab !== 'verify');
-  document.getElementById('tabStats').classList.toggle('hidden', tab !== 'stats');
+function entrarComoUsuario(nome) {
+  usuarioAtual = { nome: nome, ...contas[nome] };
+  localStorage.setItem('ultimoUsuario', nome);
+  mostrarInterfacePrincipal();
+  atualizarPerfil();
+  mostrarMensagem('✅ Bem-vindo de volta, ' + nome + '!');
 }
 
-function darVerificado() {
-  const nome = document.getElementById('verifyTarget').value.trim();
-  const canal = canais.find(c => c.nome === nome);
-  if (canal) {
-    canal.verificado = 'azul';
-    renderizarTudo();
-    atualizarEstatisticasAdmin();
-    mostrarToast(`✅ Verificado azul dado a ${nome}!`);
+function sairDaConta() {
+  usuarioAtual = null;
+  localStorage.removeItem('ultimoUsuario');
+  document.getElementById('telaInicial').classList.remove('hidden');
+  document.getElementById('conteudoPrincipal').classList.add('hidden');
+  document.getElementById('cabecalhoPrincipal').classList.add('hidden');
+  document.getElementById('navPrincipal').classList.add('hidden');
+  document.getElementById('painelAdmin').classList.remove('mostrar');
+  mostrarMensagem('👋 Até logo!');
+  fecharModal('modalPerfil');
+}
+
+function mostrarInterfacePrincipal() {
+  document.getElementById('telaInicial').classList.add('hidden');
+  document.getElementById('conteudoPrincipal').classList.remove('hidden');
+  document.getElementById('cabecalhoPrincipal').classList.remove('hidden');
+  document.getElementById('navPrincipal').classList.remove('hidden');
+  
+  document.getElementById('nomeUsuarioTopo').textContent = usuarioAtual.nome;
+  atualizarGemas();
+  
+  if (usuarioAtual.nome === DADOS.DONO_NOME) {
+    document.getElementById('painelAdmin').classList.add('mostrar');
+    atualizarListaUsuariosAdmin();
   } else {
-    mostrarToast('❌ Canal não encontrado!');
+    document.getElementById('painelAdmin').classList.remove('mostrar');
+  }
+  
+  if (conteudos.length === 0) inicializarConteudos();
+  renderizarLista();
+  iniciarBotPostagem();
+}
+
+function trocarAbaAdmin(nome) {
+  document.querySelectorAll('.abas-admin').forEach(b => b.classList.remove('ativa'));
+  event.target.classList.add('ativa');
+  
+  document.getElementById('admin-usuarios').classList.add('hidden');
+  document.getElementById('admin-conteudo').classList.add('hidden');
+  document.getElementById('admin-config').classList.add('hidden');
+  document.getElementById('admin-' + nome).classList.remove('hidden');
+  
+  if (nome === 'conteudo') {
+    document.getElementById('totalConteudos').textContent = conteudos.filter(c => !c.ehBot).length;
   }
 }
 
-function removerVerificado() {
-  const nome = document.getElementById('verifyTarget').value.trim();
-  const canal = canais.find(c => c.nome === nome);
-  if (canal) {
-    canal.verificado = 'nenhum';
-    renderizarTudo();
-    atualizarEstatisticasAdmin();
-    mostrarToast(`✅ Verificado removido de ${nome}!`);
+function atualizarListaUsuariosAdmin(filtro = '') {
+  const el = document.getElementById('listaUsuariosAdmin');
+  const usuarios = Object.keys(contas).filter(nome => 
+    nome !== DADOS.DONO_NOME && nome.toLowerCase().includes(filtro.toLowerCase())
+  );
+  
+  if (usuarios.length === 0) {
+    el.innerHTML = '<p style="color:var(--text2);font-size:13px;padding:10px;">Nenhum usuário encontrado</p>';
+    return;
+  }
+  
+  el.innerHTML = usuarios.map(nome => {
+    const u = contas[nome];
+    const temSeloAzul = u.seguidores >= DADOS.SEGUIDORES_SELO_AZUL || u.temSeloAzul;
+    return `
+      <div class="usuario-item">
+        <strong>👤 ${nome}</strong><br>
+        <span style="font-size:12px;color:var(--text2);">${u.seguidores} seguidores • ${u.gemas} gemas</span>
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+          ${temSeloAzul 
+            ? `<button class="btn btn-red btn-sm" onclick="removerSeloAzul('${nome}')">❌ Tirar Selo Azul</button>` 
+            : `<button class="btn btn-blue btn-sm" onclick="darSeloAzul('${nome}')">✅ Dar Selo Azul</button>`
+          }
+          <button class="btn btn-orange btn-sm" onclick="zerarGemasUsuario('${nome}')">💎 Zerar Gemas</button>
+          <button class="btn btn-red btn-sm" onclick="excluirUsuario('${nome}')">🗑️ Excluir</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function filtrarUsuarios() {
+  const busca = document.getElementById('buscaUsuario').value;
+  atualizarListaUsuariosAdmin(busca);
+}
+
+function darSeloAzul(nome) {
+  contas[nome].temSeloAzul = true;
+  salvarDados();
+  atualizarListaUsuariosAdmin(document.getElementById('buscaUsuario').value);
+  mostrarMensagem(`✅ Selo Azul dado para ${nome}!`);
+}
+
+function removerSeloAzul(nome) {
+  contas[nome].temSeloAzul = false;
+  salvarDados();
+  atualizarListaUsuariosAdmin(document.getElementById('buscaUsuario').value);
+  mostrarMensagem(`❌ Selo Azul removido de ${nome}`);
+}
+
+function zerarGemasUsuario(nome) {
+  if (confirm(`Zerar as gemas de ${nome}?`)) {
+    contas[nome].gemas = 0;
+    salvarDados();
+    atualizarListaUsuariosAdmin(document.getElementById('buscaUsuario').value);
+    mostrarMensagem(`💎 Gemas de ${nome} zeradas!`);
+  }
+}
+
+function excluirUsuario(nome) {
+  if (confirm(`EXCLUIR o canal "${nome}"? Isso não pode ser desfeito!`)) {
+    delete contas[nome];
+    salvarDados();
+    atualizarListaUsuariosAdmin(document.getElementById('buscaUsuario').value);
+    mostrarMensagem(`🗑️ Canal ${nome} excluído!`);
+  }
+}
+
+function limparTodosConteudos() {
+  if (confirm('Apagar TODO conteúdo de usuários? Bots continuam funcionando.')) {
+    conteudos = conteudos.filter(c => c.ehBot === true);
+    renderizarLista();
+    document.getElementById('totalConteudos').textContent = 0;
+    mostrarMensagem('✅ Conteúdo apagado!');
+  }
+}
+
+function verificarLoja() {
+  if (!usuarioAtual) return;
+  const bloqueada = document.getElementById('lojaBloqueada');
+  const grid = document.getElementById('lojaGrid');
+  
+  if (usuarioAtual.seguidores >= DADOS.SEGUIDORES_LOJA) {
+    bloqueada.classList.add('hidden');
+    grid.classList.remove('hidden');
   } else {
-    mostrarToast('❌ Canal não encontrado!');
+    bloqueada.classList.remove('hidden');
+    grid.classList.add('hidden');
   }
 }
 
-function darVerificadoDono() {
-  const nome = document.getElementById('verifyDonoTarget').value.trim();
-  const canal = canais.find(c => c.nome === nome);
-  if (canal) {
-    canal.verificado = 'dono';
-    renderizarTudo();
-    atualizarEstatisticasAdmin();
-    mostrarToast(`💜 Verificado Dono dado a ${nome}!`);
+function comprarItem(nomeItem, custo) {
+  if (!usuarioAtual) { mostrarMensagem('⚠️ Entre primeiro!'); return; }
+  if (usuarioAtual.gemas < custo) { 
+    mostrarMensagem(`⚠️ Precisa de ${custo} gemas. Tem ${usuarioAtual.gemas}.`); 
+    return; 
+  }
+  
+  if (confirm(`Comprar "${nomeItem}" por ${custo} gemas?`)) {
+    usuarioAtual.gemas -= custo;
+    if (!usuarioAtual.compras) usuarioAtual.compras = [];
+    usuarioAtual.compras.push({ item: nomeItem, custo: custo, data: Date.now() });
+    contas[usuarioAtual.nome].gemas = usuarioAtual.gemas;
+    contas[usuarioAtual.nome].compras = usuarioAtual.compras;
+    salvarDados();
+    atualizarGemas();
+    mostrarMensagem(`✅ Comprou "${nomeItem}"!`);
+  }
+}
+
+function atualizarGemas() {
+  if (!usuarioAtual) return;
+  document.getElementById('contadorGemas').textContent = usuarioAtual.gemas || 0;
+}
+
+function ganharGemas(itemId, tipo) {
+  if (!usuarioAtual) { mostrarMensagem('⚠️ Entre primeiro!'); return; }
+  if (historicoAssistidos.includes(itemId)) { mostrarMensagem('⚠️ Você já ganhou por isso!'); return; }
+  
+  const quantidade = tipo === 'live' ? DADOS.GEMAS_POR_LIVE : DADOS.GEMAS_POR_VIDEO;
+  usuarioAtual.gemas = (usuarioAtual.gemas || 0) + quantidade;
+  historicoAssistidos.push(itemId);
+  contas[usuarioAtual.nome].gemas = usuarioAtual.gemas;
+  salvarDados();
+  
+  atualizarGemas();
+  mostrarMensagem(`✅ +${quantidade} gemas ganhas! 💎`);
+  
+  const btn = document.getElementById('btn-' + itemId);
+  if (btn) {
+    btn.textContent = '✅ Já ganhou';
+    btn.disabled = true;
+    btn.style.background = '#333';
+  }
+}
+
+function copiarLink(texto) {
+  navigator.clipboard.writeText(texto).then(() => {
+    mostrarMensagem('✅ Link copiado! Abra no YouTube e assista!');
+  }).catch(() => {
+    alert('Copie manualmente: ' + texto);
+  });
+}
+
+function inicializarConteudos() {
+  conteudos = [];
+  BOTS_CANAIS.forEach(bot => {
+    for (let i = 0; i < 2; i++) {
+      adicionarConteudo(bot.nome, aleatorio(TEMAS.video), aleatorio(LINKS_EXEMPLO), 'video', true);
+    }
+    adicionarConteudo(bot.nome, aleatorio(TEMAS.live), aleatorio(LINKS_EXEMPLO), 'live', true);
+  });
+}
+
+function adicionarConteudo(canal, titulo, link, tipo, ehBot = false) {
+  const item = {
+    id: 'item_' + Date.now() + Math.random().toString(36).substr(2, 5),
+    canal: canal, titulo: titulo, link: corrigirLink(link), tipo: tipo, ehBot: ehBot, data: Date.now()
+  };
+  conteudos.unshift(item);
+  renderizarLista();
+  return item;
+}
+
+function iniciarBotPostagem() {
+  if (botTimer) clearInterval(botTimer);
+  botTimer = setInterval(() => {
+    const bot = aleatorio(BOTS_CANAIS);
+    const tipo = Math.random() > 0.4 ? 'video' : 'live';
+    const tema = tipo === 'live' ? aleatorio(TEMAS.live) : aleatorio(TEMAS.video);
+    adicionarConteudo(bot.nome, tema, aleatorio(LINKS_EXEMPLO), tipo, true);
+  }, DADOS.BOT_INTERVALO);
+}
+
+function postarVideo() {
+  const titulo = document.getElementById('tituloVideo').value.trim();
+  let link = document.getElementById('linkVideo').value.trim();
+  
+  if (!titulo) { mostrarMensagem('⚠️ Escreva um título!'); return; }
+  if (!link) { mostrarMensagem('⚠️ Coloque o link do YouTube!'); return; }
+  
+  link = corrigirLink(link);
+  adicionarConteudo(usuarioAtual.nome, titulo, link, 'video', false);
+  
+  fecharModal('modalPostar');
+  document.getElementById('tituloVideo').value = '';
+  document.getElementById('linkVideo').value = '';
+  mostrarMensagem('✅ Vídeo publicado!');
+}
+
+function criarLive() {
+  const titulo = document.getElementById('tituloLive').value.trim() || '🔴 Minha Live AO VIVO';
+  let link = document.getElementById('linkLive').value.trim();
+  
+  if (!link) { mostrarMensagem('⚠️ Coloque o link da live!'); return; }
+  
+  link = corrigirLink(link);
+  adicionarConteudo(usuarioAtual.nome, titulo, link, 'live', false);
+  
+  fecharModal('modalLive');
+  document.getElementById('tituloLive').value = '';
+  document.getElementById('linkLive').value = '';
+  mostrarMensagem('🔴 Live criada! Boa transmissão!');
+}
+
+function trocarAbaPrincipal(tipo, botao) {
+  abaAtual = tipo;
+  document.querySelectorAll('#abasPrincipais .aba-btn').forEach(b => b.classList.remove('ativa'));
+  if (botao) botao.classList.add('ativa');
+  
+  const lista = document.getElementById('listaConteudo');
+  const loja = document.getElementById('areaLoja');
+  
+  if (tipo === 'loja') {
+    lista.classList.add('hidden');
+    loja.classList.remove('hidden');
+    document.getElementById('tituloPagina').textContent = '🏪 Loja de Benefícios';
+    document.getElementById('subtituloPagina').textContent = 'Com gemas você compra itens para melhorar seu canal!';
+    verificarLoja();
   } else {
-    mostrarToast('❌ Canal não encontrado!');
+    lista.classList.remove('hidden');
+    loja.classList.add('hidden');
+    document.getElementById('tituloPagina').textContent = '🔥 Vídeos e Lives';
+    document.getElementById('subtituloPagina').textContent = 'Clique no vídeo → copie o link → cole no YouTube → assista → ganhe suas gemas! ✅';
+    renderizarLista();
   }
 }
 
-function removerVerificadoDono() {
-  const nome = document.getElementById('verifyDonoTarget').value.trim();
-  const canal = canais.find(c => c.nome === nome);
-  if (canal) {
-    canal.verificado = 'nenhum';
-    renderizarTudo();
-    atualizarEstatisticasAdmin();
-    mostrarToast(`✅ Verificado Dono removido de ${nome}!`);
-  } else {
-    mostrarToast('❌ Canal não encontrado!');
+function renderizarLista() {
+  const el = document.getElementById('listaConteudo');
+  let filtrados = conteudos;
+  
+  if (abaAtual === 'video') filtrados = conteudos.filter(c => c.tipo === 'video');
+  else if (abaAtual === 'live') filtrados = conteudos.filter(c => c.tipo === 'live');
+  else if (abaAtual === 'ia') filtrados = conteudos.filter(c => c.ehBot === true);
+  
+  if (filtrados.length === 0) {
+    el.innerHTML = '<p style="text-align:center;color:var(--text2);padding:40px;">Nenhum conteúdo encontrado</p>';
+    return;
   }
+  
+  el.innerHTML = filtrados.map(item => {
+    const jaAssistido = historicoAssistidos.includes(item.id);
+    return `
+      <div class="card">
+        <div class="thumb" onclick="copiarLink('${item.link}')">
+          ${item.tipo === 'live' ? '<span class="live-tag">🔴 LIVE</span>' : ''}
+          <span class="play-icon">▶</span>
+        </div>
+        <div class="info">
+          <h3>${item.titulo}</h3>
+          <p>Por: ${item.canal} ${item.ehBot ? '<span class="selo selo-bot">BOT</span>' : ''}</p>
+          <div class="link-area" onclick="copiarLink('${item.link}')">🔗 ${item.link.substring(0,35)}...</div>
+          <div class="acoes">
+            <button class="btn btn-purple" onclick="copiarLink('${item.link}')">📋 Copiar Link</button>
+            <button id="btn-${item.id}" class="btn ${jaAssistido ? '' : 'btn-green'}" 
+              onclick="ganharGemas('${item.id}', '${item.tipo}')" ${jaAssistido ? 'disabled style="background:#333;cursor:not-allowed;"' : ''}>
+              ${jaAssistido ? '✅ Já ganhou' : `💎 +${item.tipo === 'live' ? 10 : 5} Gema`}
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
-function atualizarEstatisticasAdmin() {
-  document.getElementById('statCanais').textContent = canais.length;
-  document.getElementById('statVideos').textContent = videos.length;
-  document.getElementById('statLives').textContent = lives.length;
+function atualizarPerfil() {
+  if (!usuarioAtual) return;
+  
+  const ehDono = usuarioAtual.nome === DADOS.DONO_NOME;
+  const seguidores = usuarioAtual.seguidores || 0;
+  let selo = '';
+  
+  if (ehDono) {
+    selo = '<span class="selo selo-verificado-roxo">💜 DONO</span>';
+  } else if (seguidores >= DADOS.SEGUIDORES_SELO_AZUL || usuarioAtual.temSeloAzul) {
+    selo = '<span class="selo selo-verificado-azul">🔵 Verificado</span>';
+  }
+  
+  const meusConteudos = conteudos.filter(c => c.canal === usuarioAtual.nome);
+  const podeLoja = seguidores >= DADOS.SEGUIDORES_LOJA;
+  
+  document.getElementById('conteudoPerfil').innerHTML = `
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:50px;margin-bottom:10px;">👤</div>
+      <h3 style="font-size:18px;">${usuarioAtual.nome} ${selo}</h3>
+    </div>
+    <div style="background:#2a2a2a;padding:15px;border-radius:8px;margin-bottom:15px;">
+      <p style="margin-bottom:8px;"><strong>💎 Gemas:</strong> ${usuarioAtual.gemas || 0}</p>
+      <p style="margin-bottom:8px;"><strong>👥 Seguidores:</strong> ${seguidores}</p>
+      <p style="margin-bottom:8px;"><strong>📝 Publicações:</strong> ${meusConteudos.length}</p>
+      <p><strong>🏪 Loja:</strong> ${podeLoja ? '✅ Liberada!' : `🔒 Bloqueada (${DADOS.SEGUIDORES_LOJA} necessárias)`}</p>
+    </div>
+    <button class="btn btn-red" style="width:100%;" onclick="sairDaConta()">🚪 Sair da conta</button>
+  `;
 }
 
-// ================= UTILITÁRIAS =================
-function formatarNumero(n) {
-  if (n >= 1000) return (n/1000).toFixed(1).replace(/\.0$/, '') + 'mil';
-  return n.toString();
-}
-
-function openModal(id) {
-  document.getElementById(id).classList.add('active');
-}
-
-function closeModal(id) {
-  document.getElementById(id).classList.remove('active');
-}
-
-function mostrarToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-window.onload = init;
+window.onload = function() {
+  const ultimo = localStorage.getItem('ultimoUsuario');
+  if (ultimo && contas[ultimo]) {
+    entrarComoUsuario(ultimo);
+  }
+};
 </script>
 </body>
 </html>
