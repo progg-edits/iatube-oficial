@@ -23,7 +23,7 @@
       background: rgba(245,158,11,0.15); border: 1px solid var(--gold); padding: 6px 14px; 
       border-radius: 20px; font-size: 15px; color: var(--gold); font-weight: bold; display: flex; align-items: center; gap: 6px;
     }
-    .user-bar { display: flex; align-items: center; gap: 12px; }
+    .user-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .btn { 
       padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer; 
       font-weight: bold; font-size: 14px; transition: 0.2s;
@@ -32,11 +32,35 @@
     .btn-primary { background: var(--accent); color: white; }
     .btn-success { background: var(--green); color: white; }
     .btn-secondary { background: #3a3a4a; color: white; }
+    .btn-purple { background: var(--dono-purple); color: white; }
+    .btn-red { background: var(--red); color: white; }
     .btn-sm { padding: 5px 10px; font-size: 12px; }
+    .btn-xs { padding: 3px 8px; font-size: 11px; }
 
     main { padding: 20px; max-width: 1200px; margin: 0 auto; }
     h2 { font-size: 20px; margin: 30px 0 15px; }
+    h3 { font-size: 17px; margin-bottom: 10px; }
 
+    /* Selos de Verificação */
+    .verified-blue {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 16px; height: 16px; background: var(--tiktok-blue);
+      border-radius: 50%; color: white; font-size: 10px; font-weight: bold;
+      margin-left: 4px; vertical-align: middle;
+    }
+    .verified-dono {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px; background: var(--dono-purple);
+      border-radius: 50%; color: white; font-size: 11px; font-weight: bold;
+      margin-left: 4px; box-shadow: 0 0 8px var(--dono-purple);
+      vertical-align: middle; animation: brilho 2s infinite;
+    }
+    @keyframes brilho {
+      0%,100% { box-shadow: 0 0 4px var(--dono-purple); }
+      50% { box-shadow: 0 0 12px var(--dono-purple); }
+    }
+
+    /* Lives */
     .lives { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; }
     .live-card { 
       min-width: 270px; background: var(--card); border-radius: 12px; overflow: hidden; 
@@ -56,10 +80,11 @@
     }
     @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
     .live-info { padding: 12px; }
-    .live-channel { font-weight: bold; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+    .live-channel { font-weight: bold; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; cursor: pointer; }
     .live-title { font-size: 13px; color: #aaa; margin-bottom: 6px; }
     .live-viewers { font-size: 12px; color: var(--green); font-weight: bold; }
 
+    /* Vídeos */
     .videos { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 20px; }
     .video-card { 
       background: var(--card); border-radius: 12px; overflow: hidden; cursor: pointer; 
@@ -69,28 +94,63 @@
     .video-thumb { 
       height: 150px; background: #2a2a3a; display: flex; align-items: center; justify-content: center; font-size: 50px; position: relative; 
     }
+    .video-badge-ai {
+      position: absolute; top: 8px; left: 8px; background: linear-gradient(135deg, var(--purple), var(--accent));
+      color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;
+    }
     .video-duration { 
       position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.8); padding: 2px 6px; border-radius: 4px; font-size: 12px; 
     }
     .video-info { padding: 12px; }
     .video-title { font-weight: bold; margin-bottom: 6px; font-size: 15px; }
-    .video-channel { font-size: 13px; color: #888; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+    .video-channel { font-size: 13px; color: #888; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; cursor: pointer; }
     .video-stats { display: flex; gap: 12px; font-size: 12px; color: #777; }
-    .stat-item { display: flex; align-items: center; gap: 3px; }
     .earn-note { font-size: 11px; color: var(--gold); margin-top: 6px; }
 
+    /* Páginas */
+    .page { display: none; }
+    .page.active { display: block; }
+    .back { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); cursor: pointer; margin-bottom: 20px; }
+
+    /* Perfil do Canal */
+    .channel-header { background: var(--card); padding: 25px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #333; }
+    .channel-top { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+    .channel-avatar { 
+      width: 80px; height: 80px; border-radius: 50%; background: var(--accent); 
+      display: flex; align-items: center; justify-content: center; font-size: 40px; flex-shrink: 0;
+    }
+    .channel-info h1 { font-size: 22px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .channel-stats { display: flex; gap: 25px; margin: 15px 0; flex-wrap: wrap; }
+    .stat-item { text-align: center; }
+    .stat-value { font-size: 22px; font-weight: bold; }
+    .stat-label { font-size: 11px; color: #888; text-transform: uppercase; }
+    .channel-desc { color: #aaa; margin: 10px 0; }
+
+    /* Modal */
     .modal { 
       position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; 
-      z-index: 1000; padding: 20px;
+      z-index: 1000; padding: 20px; overflow-y: auto;
     }
     .modal.active { display: flex; }
-    .modal-content { background: var(--card); padding: 25px; border-radius: 12px; max-width: 400px; width: 100%; border: 1px solid #444; }
+    .modal-content { background: var(--card); padding: 25px; border-radius: 12px; max-width: 450px; width: 100%; border: 1px solid #444; }
     .modal-title { font-size: 18px; margin-bottom: 15px; }
     .modal-close { float: right; font-size: 22px; cursor: pointer; color: #888; margin-top: -5px; }
     .modal-input { width: 100%; padding: 10px; border-radius: 6px; border: none; background: #2a2a3a; color: white; margin-bottom: 12px; font-size: 14px; }
     label { font-size: 13px; color: #aaa; display: block; margin-bottom: 5px; }
     .hidden { display: none !important; }
 
+    /* Painel Admin */
+    .admin-tabs { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+    .admin-tab { 
+      padding: 6px 12px; background: #2a2a3a; border-radius: 6px; cursor: pointer; font-size: 13px; 
+    }
+    .admin-tab.active { background: var(--dono-purple); font-weight: bold; }
+    .admin-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
+    .admin-row input { flex: 1; min-width: 120px; padding: 6px 10px; border-radius: 4px; border: none; background: #2a2a3a; color: white; }
+    .admin-section { margin-bottom: 18px; padding-bottom: 15px; border-bottom: 1px solid #333; }
+    .admin-section h4 { font-size: 14px; margin-bottom: 10px; color: var(--dono-purple); }
+
+    /* Toast */
     .toast { 
       position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
       background: var(--card); border: 1px solid var(--gold); color: var(--gold); padding: 12px 24px; 
@@ -98,21 +158,19 @@
     }
     .toast.show { opacity: 1; }
 
-    .verified { color: var(--tiktok-blue); font-weight: bold; font-size: 12px; }
-    .verified::after { content: " ✓"; }
-
-    .back { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); cursor: pointer; margin-bottom: 20px; }
-    .page { display: none; }
-    .page.active { display: block; }
-
+    /* Página de vídeo/live */
     .video-player-page { background: #000; border-radius: 12px; padding: 40px; text-align: center; margin-bottom: 20px; }
     .like-btn { background: none; border: none; color: #888; cursor: pointer; font-size: 18px; }
     .like-btn.liked { color: var(--accent); }
+    .ai-note { 
+      display: inline-block; background: rgba(168,85,247,0.15); border: 1px solid var(--purple);
+      padding: 4px 10px; border-radius: 12px; font-size: 12px; color: var(--purple); margin-top: 10px;
+    }
   </style>
 </head>
 <body>
 
-<!-- Toast de notificação -->
+<!-- Toast -->
 <div id="toast" class="toast"></div>
 
 <!-- Modal Login -->
@@ -131,6 +189,62 @@
       <input type="password" id="ownerPass" class="modal-input" placeholder="Digite a senha...">
     </div>
     <button class="btn btn-primary" style="width:100%;" onclick="doLogin()">Entrar ✅</button>
+  </div>
+</div>
+
+<!-- Modal Criar Canal -->
+<div id="createChannelModal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModal('createChannelModal')">✕</span>
+    <h3 class="modal-title">📢 Criar Meu Canal</h3>
+    <label>Nome do canal</label>
+    <input type="text" id="myChannelName" class="modal-input" placeholder="Meu Canal Incrível">
+    <label>Emoji do canal</label>
+    <input type="text" id="myChannelEmoji" class="modal-input" placeholder="🎮" maxlength="2">
+    <label>Descrição</label>
+    <input type="text" id="myChannelDesc" class="modal-input" placeholder="Falo sobre jogos e tecnologia!">
+    <button class="btn btn-primary" style="width:100%;" onclick="criarMeuCanal()">Criar Canal ✅</button>
+  </div>
+</div>
+
+<!-- Modal Painel Admin -->
+<div id="adminModal" class="modal">
+  <div class="modal-content" style="max-width:480px;">
+    <span class="modal-close" onclick="closeModal('adminModal')">✕</span>
+    <h3 class="modal-title" style="color:var(--dono-purple);">👑 Painel do Dono</h3>
+    
+    <div class="admin-tabs">
+      <div class="admin-tab active" onclick="switchAdminTab('verify')">Verificar</div>
+      <div class="admin-tab" onclick="switchAdminTab('stats')">Estatísticas</div>
+    </div>
+    
+    <div id="tabVerify" class="admin-tab-content">
+      <div class="admin-section">
+        <h4>✅ Dar Verificado Azul</h4>
+        <div class="admin-row">
+          <input type="text" id="verifyTarget" placeholder="Nome do canal">
+          <button class="btn btn-sm btn-primary" onclick="darVerificado()">Dar ✅</button>
+          <button class="btn btn-sm btn-secondary" onclick="removerVerificado()">Remover</button>
+        </div>
+      </div>
+      <div class="admin-section">
+        <h4>💜 Dar Verificado Dono (Roxo)</h4>
+        <div class="admin-row">
+          <input type="text" id="verifyDonoTarget" placeholder="Nome do canal">
+          <button class="btn btn-sm btn-purple" onclick="darVerificadoDono()">Dar 💜</button>
+          <button class="btn btn-sm btn-secondary" onclick="removerVerificadoDono()">Remover</button>
+        </div>
+      </div>
+    </div>
+    
+    <div id="tabStats" class="admin-tab-content hidden">
+      <div class="admin-section">
+        <h4>📊 Estatísticas do Site</h4>
+        <p style="margin-bottom:8px;">👤 Total de canais: <strong id="statCanais">0</strong></p>
+        <p style="margin-bottom:8px;">🎬 Total de vídeos: <strong id="statVideos">0</strong></p>
+        <p>🔴 Lives agora: <strong id="statLives">0</strong></p>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -153,18 +267,27 @@
     <div class="videos" id="videosContainer"></div>
   </div>
 
+  <!-- Página Perfil do Canal -->
+  <div id="pageChannel" class="page">
+    <div class="back" onclick="goHome()">← Voltar</div>
+    <div id="channelProfile"></div>
+    <h3 style="margin-top:30px;">📹 Vídeos do Canal</h3>
+    <div class="videos" id="channelVideos" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));"></div>
+  </div>
+
   <!-- Página de Vídeo -->
   <div id="pageVideo" class="page">
     <div class="back" onclick="goHome()">← Voltar</div>
     <div class="video-player-page">
-      <div style="font-size:60px; margin-bottom:20px;">🎬</div>
+      <div style="font-size:60px; margin-bottom:20px;" id="videoEmoji">🎬</div>
       <h2 id="videoPageTitle"></h2>
-      <p id="videoPageChannel" style="color:#888; margin:8px 0;"></p>
+      <p id="videoPageChannel" style="color:#888; margin:8px 0; cursor:pointer;"></p>
       <p id="videoPageViews" style="color:#666; font-size:14px;"></p>
+      <div id="aiBadgeContainer"></div>
       <div style="margin-top:15px; display:flex; justify-content:center; gap:20px;">
         <button id="likeBtn" class="like-btn" onclick="likeVideo()">❤️ <span id="likeCount">0</span></button>
       </div>
-      <p class="earn-note" style="margin-top:15px;">💰 Você ganha moedas assistindo e curtindo!</p>
+      <p class="earn-note" style="margin-top:15px;">💰 +2 moedas assistindo • +3 moedas curtindo</p>
     </div>
   </div>
 
@@ -174,101 +297,156 @@
     <div class="video-player-page">
       <div style="font-size:60px; margin-bottom:20px;">🔴</div>
       <h2 id="livePageTitle"></h2>
-      <p id="livePageChannel" style="color:#888; margin:8px 0;"></p>
+      <p id="livePageChannel" style="color:#888; margin:8px 0; cursor:pointer;"></p>
       <p id="livePageViewers" style="color:var(--green); font-weight:bold;"></p>
-      <p class="earn-note" style="margin-top:15px;">💰 Você ganha moedas a cada minuto assistindo à live!</p>
+      <p class="earn-note" style="margin-top:15px;">💰 +5 moedas a cada minuto assistindo!</p>
     </div>
   </div>
 </main>
 
 <script>
 // ================= DADOS =================
-let usuario = { nome: '', dono: false, moedas: 0 };
+let usuario = { nome: '', dono: false, moedas: 0, meuCanal: null };
+let canais = [];
 let videos = [];
 let lives = [];
-let intervalos = [];
+let videoAtual = null;
+let liveAtual = null;
+let intervaloLive = null;
 
-// Lista de bots
-const bots = [
-  { nome: 'GamerLima', emoji: '🎮', verificado: true },
-  { nome: 'SarahArts', emoji: '🎨', verificado: false },
-  { nome: 'TechPedro', emoji: '💻', verificado: true },
-  { nome: 'AnaMusic', emoji: '🎵', verificado: false },
-  { nome: 'LuanFitness', emoji: '💪', verificado: false },
-  { nome: 'JulinhaGames', emoji: '🕹️', verificado: true },
-  { nome: 'CarlosCozinha', emoji: '🍳', verificado: false },
-  { nome: 'BeatrizVlogs', emoji: '📸', verificado: true },
-  { nome: 'RafaelMotos', emoji: '🏍️', verificado: false },
-  { nome: 'MarianaModa', emoji: '👗', verificado: false },
+// Lista de bots/canais
+const botsOriginais = [
+  { id: 'bot1', nome: 'GamerLima', emoji: '🎮', verificado: 'azul', desc: 'Jogando tudo que aparece!' },
+  { id: 'bot2', nome: 'Sarah_IA', emoji: '🤖', verificado: 'nenhum', desc: 'Vídeos feitos por inteligência artificial!' },
+  { id: 'bot3', nome: 'TechPedro', emoji: '💻', verificado: 'azul', desc: 'Tecnologia e programação' },
+  { id: 'bot4', nome: 'Valorant_IA', emoji: '🎯', verificado: 'nenhum', desc: 'A IA jogando Valorant melhor que você!' },
+  { id: 'bot5', nome: 'Roblox_IA_Oficial', emoji: '🏠', verificado: 'azul', desc: 'A IA explorando o Roblox' },
+  { id: 'bot6', nome: 'Minecraft_IA', emoji: '⛏️', verificado: 'nenhum', desc: 'A IA construindo mundos incríveis' },
+  { id: 'bot7', nome: 'FreeFire_IA', emoji: '🔥', verificado: 'nenhum', desc: 'IA jogando Free Fire — será que ganha?' },
+  { id: 'bot8', nome: 'BeatrizVlogs', emoji: '📸', verificado: 'azul', desc: 'Meu dia a dia e dicas' },
+  { id: 'bot9', nome: 'Futebol_IA', emoji: '⚽', verificado: 'nenhum', desc: 'Simulando partidas com IA' },
+  { id: 'bot10', nome: 'Carros_IA', emoji: '🏎️', verificado: 'nenhum', desc: 'IA pilotando carros' },
 ];
 
-const titulosVideos = [
+// Dados de vídeos por jogo/IA
+const jogosIA = [
+  { nome: 'Valorant', emoji: '🎯', canal: 'Valorant_IA', titulos: [
+    '🤖 IA jogando Valorant — Rankeada subindo!',
+    'A IA consegue ganhar no Valorant? 🎯',
+    'Treinei uma IA para jogar Valorant sozinha!',
+    'IA vs Humanos — quem vence no Valorant?',
+  ]},
+  { nome: 'Roblox', emoji: '🏠', canal: 'Roblox_IA_Oficial', titulos: [
+    '🤖 A IA explorando o Roblox! Veja o que achou',
+    'Treinei uma IA para jogar Roblox sozinha 🏠',
+    'A IA criou seu próprio jogo no Roblox!',
+    'Desafio: A IA completa este obby no Roblox?',
+  ]},
+  { nome: 'Minecraft', emoji: '⛏️', canal: 'Minecraft_IA', titulos: [
+    '🤖 A IA construiu uma casa automática no Minecraft!',
+    'Treinei uma IA para sobreviver no Minecraft ⛏️',
+    'A IA explorou uma caverna no Minecraft — olha o que achou!',
+    'A IA planta e colhe sozinha no Minecraft!',
+  ]},
+  { nome: 'Free Fire', emoji: '🔥', canal: 'FreeFire_IA', titulos: [
+    '🤖 A IA jogando Free Fire — será que faz Booyah? 🔥',
+    'Treinei uma IA para jogar Free Fire sozinha!',
+    'IA jogando contra jogadores reais no Free Fire',
+    'Quanto a IA consegue sobreviver no Free Fire?',
+  ]},
+  { nome: 'Futebol', emoji: '⚽', canal: 'Futebol_IA', titulos: [
+    '🤖 Simulando um jogo inteiro com IA ⚽',
+    'A IA previu o resultado do jogo? Veja!',
+  ]},
+  { nome: 'Carros', emoji: '🏎️', canal: 'Carros_IA', titulos: [
+    '🤖 A IA pilotando carros em alta velocidade! 🏎️',
+    'Treinei uma IA para dirigir sozinha',
+  ]},
+];
+
+const titulosComuns = [
   'Como subir de rank rápido! 💡',
   'Melhores momentos da semana 🎯',
   'Tutorial completo para iniciantes 📖',
   'Testando coisas novas no jogo 🧪',
-  'Reagindo a vídeos incríveis 😮',
   'Dicas que ninguém te conta! 🤫',
-  'Minha rotina de estudos 📚',
-  'Desafio impossível! 🔥',
-  'Explorando lugares novos 🌍',
   'Top 5 truques que você precisa saber ✅',
-];
-
-const titulosLives = [
-  'Jogando junto com vocês! Venham! 🎮',
-  'Rankeada subindo pra topo! 🏆',
-  'Conversa ao vivo + joguinho 😊',
-  'Tutorial passo a passo ao vivo 📖',
-  'Bora bater papo? 💬',
-  'Desafio: conseguir finalizar hoje? 🔥',
-  'Primeira live do canal! Obrigado! ❤️',
-  'Respondendo perguntas ao vivo 🙋',
 ];
 
 // ================= INICIALIZAR =================
 function init() {
-  gerarConteudoBots();
+  canais = JSON.parse(JSON.stringify(botsOriginais));
+  gerarConteudo();
   renderizarTudo();
-  iniciarBotsAoVivo();
+  iniciarBots();
   atualizarMoedasDisplay();
+  atualizarEstatisticasAdmin();
 }
 
-// Gerar vídeos e lives dos bots
-function gerarConteudoBots() {
+function gerarConteudo() {
   videos = [];
   lives = [];
   
-  // Cada bot tem 1 vídeo
-  bots.forEach((bot, i) => {
-    videos.push({
-      id: `vid-${i}`,
-      titulo: titulosVideos[i % titulosVideos.length],
-      canal: bot.nome,
-      emoji: bot.emoji,
-      verificado: bot.verificado,
-      visualizacoes: Math.floor(Math.random() * 15000) + 100,
-      curtidas: Math.floor(Math.random() * 2000) + 50,
-      duracao: `${Math.floor(Math.random() * 15) + 1}:${String(Math.floor(Math.random() * 60)).padStart(2,'0')}`,
-    });
+  // Vídeos dos bots normais
+  canais.forEach((canal, i) => {
+    if (!jogosIA.some(j => j.canal === canal.nome)) {
+      videos.push({
+        id: `vid-${i}`,
+        titulo: titulosComuns[i % titulosComuns.length],
+        canal: canal.nome,
+        canalId: canal.id,
+        emoji: canal.emoji,
+        verificado: canal.verificado,
+        visualizacoes: Math.floor(Math.random() * 15000) + 100,
+        curtidas: Math.floor(Math.random() * 2000) + 50,
+        duracao: `${Math.floor(Math.random() * 15) + 1}:${String(Math.floor(Math.random() * 60)).padStart(2,'0')}`,
+        ehIA: false,
+        jogo: null,
+      });
+    }
   });
 
-  // Metade dos bots está em live
-  const numLives = Math.floor(bots.length / 2);
-  for (let i = 0; i < numLives; i++) {
-    const bot = bots[i];
+  // Vídeos ESPECÍFICOS da IA por jogo
+  jogosIA.forEach(jogo => {
+    const canal = canais.find(c => c.nome === jogo.canal);
+    if (canal) {
+      jogo.titulos.forEach((titulo, ti) => {
+        videos.push({
+          id: `vid-ia-${jogo.nome}-${ti}`,
+          titulo: titulo,
+          canal: canal.nome,
+          canalId: canal.id,
+          emoji: jogo.emoji,
+          verificado: canal.verificado,
+          visualizacoes: Math.floor(Math.random() * 8000) + 200,
+          curtidas: Math.floor(Math.random() * 1500) + 30,
+          duracao: `${Math.floor(Math.random() * 10) + 2}:${String(Math.floor(Math.random() * 60)).padStart(2,'0')}`,
+          ehIA: true,
+          jogo: jogo.nome,
+        });
+      });
+    }
+  });
+
+  // Lives
+  const canaisLive = canais.slice(0, 5);
+  canaisLive.forEach((bot, i) => {
     lives.push({
       id: `live-${i}`,
-      titulo: titulosLives[i % titulosLives.length],
+      titulo: jogosIA.some(j => j.canal === bot.nome) 
+        ? `🤖 A IA tá jogando agora ao vivo!`
+        : `Jogando junto com vocês! Venham! 🎮`,
       canal: bot.nome,
+      canalId: bot.id,
       emoji: bot.emoji,
       verificado: bot.verificado,
       espectadores: Math.floor(Math.random() * 500) + 20,
     });
-  }
+  });
+
+  videos.sort(() => Math.random() - 0.5);
 }
 
-// Renderizar tudo
 function renderizarTudo() {
   renderizarLives();
   renderizarVideos();
@@ -279,7 +457,7 @@ function renderizarLives() {
   container.innerHTML = '';
   
   if (lives.length === 0) {
-    container.innerHTML = '<p style="color:#666;">Nenhuma live no momento. Volte mais tarde!</p>';
+    container.innerHTML = '<p style="color:#666;">Nenhuma live no momento.</p>';
     return;
   }
 
@@ -294,8 +472,8 @@ function renderizarLives() {
       </div>
       <div class="live-info">
         <div class="live-channel">
-          ${live.canal}
-          ${live.verificado ? '<span class="verified"></span>' : ''}
+          <span onclick="event.stopPropagation(); abrirCanal('${live.canalId}')">${live.canal}</span>
+          ${getVerificadoIcon(live.verificado)}
         </div>
         <div class="live-title">${live.titulo}</div>
         <div class="live-viewers">👁 ${live.espectadores} assistindo</div>
@@ -316,13 +494,14 @@ function renderizarVideos() {
     card.innerHTML = `
       <div class="video-thumb">
         ${video.emoji}
+        ${video.ehIA ? '<span class="video-badge-ai">🤖 IA</span>' : ''}
         <span class="video-duration">${video.duracao}</span>
       </div>
       <div class="video-info">
         <div class="video-title">${video.titulo}</div>
         <div class="video-channel">
-          ${video.canal}
-          ${video.verificado ? '<span class="verified"></span>' : ''}
+          <span onclick="event.stopPropagation(); abrirCanal('${video.canalId}')">${video.canal}</span>
+          ${getVerificadoIcon(video.verificado)}
         </div>
         <div class="video-stats">
           <span class="stat-item">👁 ${formatarNumero(video.visualizacoes)}</span>
@@ -334,11 +513,74 @@ function renderizarVideos() {
   });
 }
 
-// ================= FUNÇÕES DE PÁGINA =================
-let videoAtual = null;
-let liveAtual = null;
-let tempoAssistindo = 0;
-let intervaloLive = null;
+function getVerificadoIcon(tipo) {
+  if (tipo === 'azul') return '<span class="verified-blue">✓</span>';
+  if (tipo === 'dono') return '<span class="verified-dono">👑</span>';
+  return '';
+}
+
+// ================= PÁGINAS =================
+function abrirCanal(canalId) {
+  const canal = canais.find(c => c.id === canalId);
+  if (!canal) return;
+
+  esconderPaginas();
+  document.getElementById('pageChannel').classList.add('active');
+
+  const canalVideos = videos.filter(v => v.canalId === canalId);
+  
+  document.getElementById('channelProfile').innerHTML = `
+    <div class="channel-header">
+      <div class="channel-top">
+        <div class="channel-avatar">${canal.emoji}</div>
+        <div>
+          <h1>${canal.nome} ${getVerificadoIcon(canal.verificado)}</h1>
+          <p class="channel-desc">${canal.desc || 'Canal de conteúdo'}</p>
+          <div class="channel-stats">
+            <div class="stat-item">
+              <div class="stat-value">${canalVideos.length}</div>
+              <div class="stat-label">Vídeos</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">${Math.floor(Math.random() * 5000) + 100}</div>
+              <div class="stat-label">Inscritos</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">${formatarNumero(canalVideos.reduce((s,v) => s + v.visualizacoes, 0))}</div>
+              <div class="stat-label">Visualizações</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const container = document.getElementById('channelVideos');
+  container.innerHTML = '';
+  if (canalVideos.length === 0) {
+    container.innerHTML = '<p style="color:#666;">Nenhum vídeo ainda.</p>';
+  } else {
+    canalVideos.forEach(video => {
+      const card = document.createElement('div');
+      card.className = 'video-card';
+      card.onclick = () => abrirVideo(video);
+      card.innerHTML = `
+        <div class="video-thumb" style="height:100px; font-size:35px;">
+          ${video.emoji}
+          ${video.ehIA ? '<span class="video-badge-ai" style="font-size:9px;">🤖 IA</span>' : ''}
+          <span class="video-duration" style="font-size:10px;">${video.duracao}</span>
+        </div>
+        <div class="video-info" style="padding:8px;">
+          <div class="video-title" style="font-size:13px;">${video.titulo}</div>
+          <div class="video-stats" style="margin-top:5px;">
+            <span class="stat-item">👁 ${formatarNumero(video.visualizacoes)}</span>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+}
 
 function abrirVideo(video) {
   if (!usuario.nome) {
@@ -353,12 +595,23 @@ function abrirVideo(video) {
   document.getElementById('pageVideo').classList.add('active');
   
   document.getElementById('videoPageTitle').textContent = video.titulo;
-  document.getElementById('videoPageChannel').textContent = `${video.emoji} ${video.canal}`;
+  document.getElementById('videoPageChannel').innerHTML = `
+    <span onclick="abrirCanal('${video.canalId}')">${video.canal}</span>
+    ${getVerificadoIcon(video.verificado)}
+  `;
   document.getElementById('videoPageViews').textContent = `${formatarNumero(video.visualizacoes)} visualizações`;
   document.getElementById('likeCount').textContent = formatarNumero(video.curtidas);
   document.getElementById('likeBtn').classList.remove('liked');
+  document.getElementById('videoEmoji').textContent = video.emoji;
   
-  // Ganha moedas por assistir
+  // Badge IA
+  const badgeContainer = document.getElementById('aiBadgeContainer');
+  if (video.ehIA) {
+    badgeContainer.innerHTML = `<span class="ai-note">🤖 Vídeo gerado por IA — ${video.jogo}</span>`;
+  } else {
+    badgeContainer.innerHTML = '';
+  }
+  
   ganharMoedas(2);
   mostrarToast('+💰 2 moedas por assistir!');
 }
@@ -376,19 +629,20 @@ function abrirLive(live) {
   document.getElementById('pageLive').classList.add('active');
   
   document.getElementById('livePageTitle').textContent = live.titulo;
-  document.getElementById('livePageChannel').textContent = `${live.emoji} ${live.canal}`;
+  document.getElementById('livePageChannel').innerHTML = `
+    <span onclick="abrirCanal('${live.canalId}')">${live.canal}</span>
+    ${getVerificadoIcon(live.verificado)}
+  `;
   document.getElementById('livePageViewers').textContent = `👁 ${live.espectadores} pessoas assistindo`;
   
-  // Ganha moedas a cada minuto na live
-  tempoAssistindo = 0;
   if (intervaloLive) clearInterval(intervaloLive);
+  let tempo = 0;
   intervaloLive = setInterval(() => {
-    tempoAssistindo++;
-    if (tempoAssistindo % 60 === 0) {
+    tempo++;
+    if (tempo % 60 === 0) {
       ganharMoedas(5);
       mostrarToast('+💰 5 moedas — obrigado por assistir!');
     }
-    // Atualiza espectadores de tempos em tempos
     if (Math.random() < 0.15) {
       live.espectadores += Math.floor(Math.random() * 10) - 4;
       if (live.espectadores < 5) live.espectadores = 10;
@@ -410,7 +664,7 @@ function likeVideo() {
   videoAtual.curtidas++;
   document.getElementById('likeCount').textContent = formatarNumero(videoAtual.curtidas);
   ganharMoedas(3);
-  mostrarToast('+💰 3 moedas por curtir! Obrigado! ❤️');
+  mostrarToast('+💰 3 moedas por curtir! ❤️');
 }
 
 function goHome() {
@@ -424,11 +678,11 @@ function esconderPaginas() {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 }
 
-// ================= SISTEMA DE MOEDAS =================
+// ================= MOEDAS =================
 function ganharMoedas(quantia) {
   usuario.moedas += quantia;
   atualizarMoedasDisplay();
-  salvarDados();
+  localStorage.setItem('iatube-moedas', usuario.moedas);
 }
 
 function atualizarMoedasDisplay() {
@@ -436,8 +690,7 @@ function atualizarMoedasDisplay() {
 }
 
 // ================= BOTS DINÂMICOS =================
-function iniciarBotsAoVivo() {
-  // A cada tempo, muda quem está em live e atualiza espectadores
+function iniciarBots() {
   setInterval(() => {
     lives.forEach(live => {
       const mudanca = Math.floor(Math.random() * 7) - 3;
@@ -446,37 +699,40 @@ function iniciarBotsAoVivo() {
     renderizarLives();
   }, 8000);
 
-  // A cada 40s, um bot novo posta vídeo
+  // Novo vídeo da IA aparece de tempos em tempos
   setInterval(() => {
-    const bot = bots[Math.floor(Math.random() * bots.length)];
-    const novoVid = {
-      id: `vid-${Date.now()}`,
-      titulo: titulosVideos[Math.floor(Math.random() * titulosVideos.length)],
-      canal: bot.nome,
-      emoji: bot.emoji,
-      verificado: bot.verificado,
-      visualizacoes: 0,
-      curtidas: 0,
-      duracao: `${Math.floor(Math.random() * 15) + 1}:${String(Math.floor(Math.random() * 60)).padStart(2,'0')}`,
-    };
-    videos.unshift(novoVid);
-    if (videos.length > 15) videos.pop();
-    renderizarVideos();
-  }, 40000);
+    const jogo = jogosIA[Math.floor(Math.random() * jogosIA.length)];
+    const canal = canais.find(c => c.nome === jogo.canal);
+    if (canal) {
+      const novoVid = {
+        id: `vid-ia-${Date.now()}`,
+        titulo: jogo.titulos[Math.floor(Math.random() * jogo.titulos.length)],
+        canal: canal.nome,
+        canalId: canal.id,
+        emoji: jogo.emoji,
+        verificado: canal.verificado,
+        visualizacoes: 0,
+        curtidas: 0,
+        duracao: `${Math.floor(Math.random() * 10) + 2}:${String(Math.floor(Math.random() * 60)).padStart(2,'0')}`,
+        ehIA: true,
+        jogo: jogo.nome,
+      };
+      videos.unshift(novoVid);
+      if (videos.length > 25) videos.pop();
+      renderizarVideos();
+      mostrarToast(`🤖 Novo vídeo de ${jogo.nome} da IA chegou!`);
+    }
+  }, 60000);
 }
 
-// ================= LOGIN =================
+// ================= LOGIN E CANAL =================
 function toggleOwnerPass() {
-  const wrap = document.getElementById('ownerPassWrap');
-  wrap.classList.toggle('hidden');
+  document.getElementById('ownerPassWrap').classList.toggle('hidden');
 }
 
 function doLogin() {
   const nome = document.getElementById('inpNome').value.trim();
-  if (!nome) {
-    mostrarToast('⚠️ Digite seu nome!');
-    return;
-  }
+  if (!nome) { mostrarToast('⚠️ Digite seu nome!'); return; }
 
   const ehDono = document.getElementById('chkOwner').checked;
   const senha = document.getElementById('ownerPass').value;
@@ -489,15 +745,23 @@ function doLogin() {
   usuario.nome = nome;
   usuario.dono = ehDono;
   
-  // Carrega moedas salvas ou começa com 0
   const salvas = localStorage.getItem('iatube-moedas');
   usuario.moedas = salvas ? parseInt(salvas) : 0;
   
   atualizarMoedasDisplay();
   closeModal('loginModal');
   
+  let botoesExtra = '';
+  if (!usuario.meuCanal) {
+    botoesExtra += `<button class="btn btn-sm btn-success" onclick="openModal('createChannelModal')">📢 Meu Canal</button>`;
+  }
+  if (usuario.dono) {
+    botoesExtra += `<button class="btn btn-sm btn-purple" onclick="openModal('adminModal')">👑 Admin</button>`;
+  }
+  
   document.getElementById('userBar').innerHTML = `
     <span style="font-size:14px;">👤 ${nome} ${ehDono ? '👑' : ''}</span>
+    ${botoesExtra}
     <button class="btn btn-sm btn-secondary" onclick="sair()">Sair</button>
   `;
   
@@ -505,16 +769,111 @@ function doLogin() {
 }
 
 function sair() {
-  salvarDados();
-  usuario = { nome: '', dono: false, moedas: 0 };
+  usuario = { nome: '', dono: false, moedas: 0, meuCanal: null };
   atualizarMoedasDisplay();
   document.getElementById('userBar').innerHTML = '<button class="btn btn-primary" onclick="openModal(\'loginModal\')">Entrar</button>';
   goHome();
   mostrarToast('👋 Até logo!');
 }
 
-function salvarDados() {
-  localStorage.setItem('iatube-moedas', usuario.moedas);
+function criarMeuCanal() {
+  const nome = document.getElementById('myChannelName').value.trim();
+  const emoji = document.getElementById('myChannelEmoji').value.trim() || '📺';
+  const desc = document.getElementById('myChannelDesc').value.trim() || 'Meu canal no IA Tube!';
+  
+  if (!nome) { mostrarToast('⚠️ Digite um nome para o canal!'); return; }
+  
+  const novoCanal = {
+    id: `meu-${Date.now()}`,
+    nome: nome,
+    emoji: emoji,
+    desc: desc,
+    verificado: 'nenhum',
+  };
+  
+  canais.unshift(novoCanal);
+  usuario.meuCanal = novoCanal;
+  
+  closeModal('createChannelModal');
+  mostrarToast(`✅ Canal "${nome}" criado com sucesso!`);
+  
+  // Atualizar barra do usuário
+  let botoes = `<span style="font-size:14px;">👤 ${usuario.nome} ${usuario.dono ? '👑' : ''}</span>`;
+  if (usuario.dono) {
+    botoes += `<button class="btn btn-sm btn-purple" onclick="openModal('adminModal')">👑 Admin</button>`;
+  }
+  botoes += `<button class="btn btn-sm btn-secondary" onclick="sair()">Sair</button>`;
+  document.getElementById('userBar').innerHTML = botoes;
+  
+  atualizarEstatisticasAdmin();
+  renderizarTudo();
+}
+
+// ================= PAINEL DE ADMIN =================
+function switchAdminTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  document.getElementById('tabVerify').classList.toggle('hidden', tab !== 'verify');
+  document.getElementById('tabStats').classList.toggle('hidden', tab !== 'stats');
+}
+
+function darVerificado() {
+  const nome = document.getElementById('verifyTarget').value.trim();
+  const canal = canais.find(c => c.nome === nome);
+  if (canal) {
+    canal.verificado = 'azul';
+    renderizarTudo();
+    atualizarEstatisticasAdmin();
+    mostrarToast(`✅ Verificado azul dado a ${nome}!`);
+  } else {
+    mostrarToast('❌ Canal não encontrado!');
+  }
+}
+
+function removerVerificado() {
+  const nome = document.getElementById('verifyTarget').value.trim();
+  const canal = canais.find(c => c.nome === nome);
+  if (canal) {
+    canal.verificado = 'nenhum';
+    renderizarTudo();
+    atualizarEstatisticasAdmin();
+    mostrarToast(`✅ Verificado removido de ${nome}!`);
+  } else {
+    mostrarToast('❌ Canal não encontrado!');
+  }
+}
+
+function darVerificadoDono() {
+  const nome = document.getElementById('verifyDonoTarget').value.trim();
+  const canal = canais.find(c => c.nome === nome);
+  if (canal) {
+    canal.verificado = 'dono';
+    renderizarTudo();
+    atualizarEstatisticasAdmin();
+    mostrarToast(`💜 Verificado Dono dado a ${nome}!`);
+  } else {
+    mostrarToast('❌ Canal não encontrado!');
+  }
+}
+
+function removerVerificadoDono() {
+  const nome = document.getElementById('verifyDonoTarget').value.trim();
+  const canal = canais.find(c => c.nome === nome);
+  if (canal) {
+    canal.verificado = 'nenhum';
+    renderizarTudo();
+    atualizarEstatisticasAdmin();
+    mostrarToast(`✅ Verificado Dono removido de ${nome}!`);
+  } else {
+    mostrarToast('❌ Canal não encontrado!');
+  }
+}
+
+function atualizarEstatisticasAdmin() {
+  document.getElementById('statCanais').textContent = canais.length;
+  document.getElementById('statVideos').textContent = videos.length;
+  document.getElementById('statLives').textContent = lives.length;
 }
 
 // ================= UTILITÁRIAS =================
@@ -538,7 +897,6 @@ function mostrarToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// Iniciar tudo quando carregar
 window.onload = init;
 </script>
 </body>
